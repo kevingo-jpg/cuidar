@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuidar — Conectando gerações com cuidado</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-dark: #085041;
+      --green-mid: #0F6E56;
+      --green-main: #1D9E75;
+      --green-light: #5DCAA5;
+      --green-pale: #E1F5EE;
+      --blue-pale: #E6F1FB;
+      --blue-mid: #185FA5;
+      --blue-text: #0C447C;
+      --teal-light: #9FE1CB;
+      --coral-light: #F5C4B3;
+      --coral-text: #712B13;
+      --blue-avatar: #B5D4F4;
+      --amber-star: #BA7517;
+      --amber-text: #854F0B;
+      --amber-bg: #FAEEDA;
+      --bg: #f5f5f0;
+      --surface: #ffffff;
+      --surface2: #f0efea;
+      --border: rgba(0,0,0,0.12);
+      --border2: rgba(0,0,0,0.22);
+      --text: #1a1a18;
+      --text2: #6b6b66;
+      --text3: #9e9e99;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem 3rem;
+      color: var(--text);
+    }
+
+    header {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .brand { display: flex; flex-direction: column; }
+    .brand-name { font-size: 20px; font-weight: 600; color: var(--green-mid); letter-spacing: -0.3px; }
+    .brand-sub { font-size: 11px; color: var(--text3); }
+
+    .toggle-row {
+      display: flex;
+      border: 0.5px solid var(--border2);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .toggle-btn {
+      padding: 7px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      background: var(--surface);
+      color: var(--text2);
+      border: none;
+      transition: background 0.15s, color 0.15s;
+      font-family: inherit;
+    }
+    .toggle-btn.active {
+      background: var(--surface2);
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .main { width: 100%; max-width: 480px; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .progress-bar {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .step-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600;
+      flex-shrink: 0;
+    }
+    .step-dot.done { background: var(--green-main); color: #fff; }
+    .step-dot.active { background: var(--green-mid); color: #fff; }
+    .step-dot.future { background: var(--surface2); color: var(--text3); border: 0.5px solid var(--border); }
+    .step-line { flex: 1; height: 1px; background: var(--border); }
+
+    .section-title { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
+    .section-sub { font-size: 13px; color: var(--text2); margin-bottom: 1rem; }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 1rem 0;
+    }
+    @media (max-width: 340px) { .service-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .service-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem 0.5rem;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.1s, background 0.15s;
+      text-align: center;
+      user-select: none;
+    }
+    .service-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+    .service-card.selected { border: 2px solid var(--green-main); background: var(--green-pale); }
+    .service-icon { font-size: 26px; margin-bottom: 6px; }
+    .service-label { font-size: 12px; font-weight: 600; color: var(--text); }
+    .service-desc { font-size: 11px; color: var(--text2); margin-top: 2px; line-height: 1.3; }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-label { font-size: 13px; color: var(--text2); margin-bottom: 5px; display: block; font-weight: 500; }
+    input[type=text], input[type=tel], input[type=date], input[type=email], textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--green-main); box-shadow: 0 0 0 3px rgba(29,158,117,0.12); }
+    textarea { min-height: 80px; resize: vertical; line-height: 1.5; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 6px; padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border2);
+      background: var(--surface); color: var(--text);
+      font-family: inherit;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn:hover { background: var(--surface2); }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--green-mid); color: #fff; border-color: var(--green-mid); }
+    .btn-primary:hover { background: var(--green-dark); }
+    .btn-block { width: 100%; }
+
+    .nav { display: flex; gap: 8px; justify-content: space-between; margin-top: 1.5rem; }
+
+    .carer-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .avatar {
+      width: 46px; height: 46px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; flex-shrink: 0;
+    }
+    .av-teal { background: var(--teal-light); color: var(--green-dark); }
+    .av-blue { background: var(--blue-avatar); color: var(--blue-text); }
+    .av-coral { background: var(--coral-light); color: var(--coral-text); }
+
+    .carer-name { font-size: 14px; font-weight: 600; }
+    .stars { color: var(--amber-star); font-size: 12px; margin-top: 2px; }
+    .carer-loc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .tag { font-size: 11px; padding: 2px 8px; border-radius: 20px; border: 0.5px solid var(--border2); color: var(--text2); background: var(--surface2); }
+
+    .badge { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 600; }
+    .badge-teal { background: var(--green-pale); color: var(--green-mid); }
+    .badge-blue { background: var(--blue-pale); color: var(--blue-mid); }
+    .badge-amber { background: var(--amber-bg); color: var(--amber-text); }
+
+    .filter-row {
+      display: flex; gap: 6px; margin-bottom: 1rem;
+      overflow-x: auto; padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .filter-chip {
+      padding: 5px 13px; border-radius: 20px; font-size: 12px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text2); cursor: pointer; white-space: nowrap;
+      font-family: inherit; transition: background 0.12s, color 0.12s;
+    }
+    .filter-chip.active { background: var(--green-main); color: #fff; border-color: var(--green-main); }
+
+    .confirm-box {
+      background: var(--green-pale); border-radius: var(--radius);
+      padding: 1.5rem; border: 1px solid var(--green-light);
+      text-align: center; margin-bottom: 1rem;
+    }
+    .confirm-icon { font-size: 40px; margin-bottom: 8px; }
+    .confirm-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--green-dark); }
+    .confirm-sub { font-size: 13px; color: var(--green-mid); line-height: 1.5; }
+
+    .info-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; }
+    .info-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
+    .info-row:last-child { border-bottom: none; }
+    .info-key { color: var(--text2); }
+    .info-val { font-weight: 500; }
+    .status-ok { color: var(--green-main); }
+
+    .security-note {
+      background: var(--surface2); border-radius: var(--radius-sm);
+      padding: 10px 12px; margin-bottom: 1rem;
+      display: flex; gap: 8px; align-items: flex-start;
+    }
+    .security-note span { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+    footer { margin-top: 2.5rem; font-size: 11px; color: var(--text3); text-align: center; }
+
+    .subcategory-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1rem 1.1rem;
+      margin-top: 1rem; animation: slideDown 0.2s ease;
+    }
+    @keyframes slideDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+    .subcategory-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+
+    .radio-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); margin-bottom: 8px;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s; user-select: none;
+    }
+    .radio-option:last-child { margin-bottom: 0; }
+    .radio-option:hover { border-color: var(--border2); }
+    .radio-option.selected { border-color: var(--green-main); background: var(--green-pale); }
+    .radio-dot {
+      width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border2);
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.15s;
+    }
+    .radio-option.selected .radio-dot { border-color: var(--green-main); background: var(--green-main); }
+    .radio-option.selected .radio-dot::after { content:''; width:6px; height:6px; border-radius:50%; background:#fff; display:block; }
+    .radio-label { font-size: 13px; font-weight: 500; color: var(--text); }
+    .radio-desc { font-size: 11px; color: var(--text2); margin-top: 1px; }
+
+    .checkbox-option {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 12px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); margin-bottom: 8px;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s; user-select: none;
+    }
+    .checkbox-option:last-child { margin-bottom: 0; }
+    .checkbox-option:hover { border-color: var(--border2); }
+    .checkbox-option.selected { border-color: var(--green-main); background: var(--green-pale); }
+    .checkbox-box {
+      width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0; margin-top: 1px;
+      border: 2px solid var(--border2); display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #fff;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .checkbox-option.selected .checkbox-box { background: var(--green-main); border-color: var(--green-main); }
+    .checkbox-label { font-size: 13px; font-weight: 500; color: var(--text); }
+    .checkbox-desc { font-size: 11px; color: var(--text2); margin-top: 1px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-name">🌿 Cuidar</div>
+      <div class="brand-sub">conectando gerações com cuidado</div>
+    </div>
+    <div class="toggle-row">
+      <button class="toggle-btn active" id="tab-cliente" onclick="setTab('cliente')">Preciso de ajuda</button>
+      <button class="toggle-btn" id="tab-cuidador" onclick="setTab('cuidador')">Quero ajudar</button>
+    </div>
+  </header>
+
+  <div class="main">
+
+    <!-- ===================== CLIENTE ===================== -->
+    <div id="view-cliente">
+
+      <!-- PASSO 1 — Tipo de serviço -->
+      <div id="s1" class="screen active">
+        <div class="progress-bar">
+          <div class="step-dot active">1</div><div class="step-line"></div>
+          <div class="step-dot future">2</div><div class="step-line"></div>
+          <div class="step-dot future">3</div><div class="step-line"></div>
+          <div class="step-dot future">4</div><div class="step-line"></div>
+          <div class="step-dot future">5</div>
+        </div>
+        <div class="section-title">Que tipo de ajuda precisa?</div>
+        <div class="section-sub">Selecione um ou mais serviços</div>
+        <div class="service-grid">
+          <div class="service-card" id="card-consulta" onclick="selectService('consulta')">
+            <div class="service-icon">🏥</div>
+            <div class="service-label">Consulta médica</div>
+            <div class="service-desc">Acompanhamento e transporte</div>
+          </div>
+          <div class="service-card" id="card-contas" onclick="selectService('contas')">
+            <div class="service-icon">📄</div>
+            <div class="service-label">Pagar contas</div>
+            <div class="service-desc">Banco, correios, finanças</div>
+          </div>
+          <div class="service-card" id="card-compras" onclick="selectService('compras')">
+            <div class="service-icon">🛒</div>
+            <div class="service-label">Compras</div>
+            <div class="service-desc">Supermercado e farmácia</div>
+          </div>
+          <div class="service-card" id="card-exames" onclick="selectService('exames')">
+            <div class="service-icon">🔬</div>
+            <div class="service-label">Exames</div>
+            <div class="service-desc">Coleta ou laboratório</div>
+          </div>
+          <div class="service-card" id="card-passeio" onclick="selectService('passeio')">
+            <div class="service-icon">🌳</div>
+            <div class="service-label">Passeio</div>
+            <div class="service-desc">Companhia ao ar livre</div>
+          </div>
+          <div class="service-card" id="card-outro" onclick="selectService('outro')">
+            <div class="service-icon">💬</div>
+            <div class="service-label">Outro</div>
+            <div class="service-desc">Descreva o que precisa</div>
+          </div>
+        </div>
+
+        <!-- Subcategoria: Pagar Contas -->
+        <div class="subcategory-box" id="sub-contas" style="display:none;">
+          <div class="subcategory-title">📄 Como prefere que o cuidador trate das contas?</div>
+          <div class="radio-option" onclick="selectRadio('contas', 'sozinho', this)">
+            <div class="radio-dot"></div>
+            <div>
+              <div class="radio-label">Cuidador vai sozinho</div>
+              <div class="radio-desc">O cuidador trata de tudo de forma independente</div>
+            </div>
+          </div>
+          <div class="radio-option" onclick="selectRadio('contas', 'acompanhado', this)">
+            <div class="radio-dot"></div>
+            <div>
+              <div class="radio-label">Vou acompanhar o cuidador</div>
+              <div class="radio-desc">Prefiro estar presente durante o processo</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subcategoria: Compras -->
+        <div class="subcategory-box" id="sub-compras" style="display:none;">
+          <div class="subcategory-title">🛒 Como prefere que as compras sejam feitas?</div>
+          <div class="radio-option" onclick="selectRadio('compras', 'sozinho', this)">
+            <div class="radio-dot"></div>
+            <div>
+              <div class="radio-label">Cuidador vai sozinho</div>
+              <div class="radio-desc">O cuidador faz as compras e entrega em casa</div>
+            </div>
+          </div>
+          <div class="radio-option" onclick="selectRadio('compras', 'acompanhado', this)">
+            <div class="radio-dot"></div>
+            <div>
+              <div class="radio-label">Vou acompanhar o cuidador</div>
+              <div class="radio-desc">Prefiro ir às compras juntamente com o cuidador</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav">
+          <div></div>
+          <button class="btn btn-primary" onclick="avancarS1()">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- PASSO 1B — Detalhes do serviço "Outro" -->
+      <div id="s1b" class="screen">
+        <div class="progress-bar">
+          <div class="step-dot done">✓</div><div class="step-line"></div>
+          <div class="step-dot active">2</div><div class="step-line"></div>
+          <div class="step-dot future">3</div><div class="step-line"></div>
+          <div class="step-dot future">4</div><div class="step-line"></div>
+          <div class="step-dot future">5</div><div class="step-line"></div>
+          <div class="step-dot future">6</div>
+        </div>
+        <div class="section-title">Que tipo de ajuda precisa?</div>
+        <div class="section-sub">Selecione as opções que se aplicam e descreva o que necessita</div>
+
+        <div style="margin-bottom: 1rem;">
+          <div class="checkbox-option" onclick="toggleCheckbox(this)">
+            <div class="checkbox-box">✕</div>
+            <div>
+              <div class="checkbox-label">Acompanhamento a viagem</div>
+              <div class="checkbox-desc">Suporte em deslocações de comboio, autocarro ou avião</div>
+            </div>
+          </div>
+          <div class="checkbox-option" onclick="toggleCheckbox(this)">
+            <div class="checkbox-box">✕</div>
+            <div>
+              <div class="checkbox-label">Companhia ao domicílio</div>
+              <div class="checkbox-desc">Presença e companhia em casa durante algumas horas</div>
+            </div>
+          </div>
+          <div class="checkbox-option" onclick="toggleCheckbox(this)">
+            <div class="checkbox-box">✕</div>
+            <div>
+              <div class="checkbox-label">Tarefas domésticas</div>
+              <div class="checkbox-desc">Limpeza leve, organização ou preparação de refeições</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Descreva com mais detalhe o que necessita</label>
+          <textarea placeholder="Ex: preciso de alguém para me acompanhar numa viagem de comboio a Coimbra no próximo sábado..."></textarea>
+        </div>
+
+        <div class="nav">
+          <button class="btn" onclick="goTo('s1')">← Voltar</button>
+          <button class="btn btn-primary" onclick="goTo('s2')">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- PASSO 2 — Dados pessoais + identificação -->
+      <div id="s2" class="screen">
+        <div class="progress-bar">
+          <div class="step-dot done">✓</div><div class="step-line"></div>
+          <div class="step-dot active">2</div><div class="step-line"></div>
+          <div class="step-dot future">3</div><div class="step-line"></div>
+          <div class="step-dot future">4</div><div class="step-line"></div>
+          <div class="step-dot future">5</div>
+        </div>
+        <div class="section-title">Os seus dados pessoais</div>
+        <div class="section-sub">Precisamos verificar a sua identidade para garantir segurança</div>
+
+        <div class="form-group">
+          <label class="form-label">Nome completo</label>
+          <input type="text" id="cl-nome" placeholder="Ex: Maria da Silva" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data de nascimento</label>
+          <input type="date" id="cl-nasc" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Morada completa</label>
+          <input type="text" id="cl-morada" placeholder="Rua, número, código postal, localidade" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contacto telefónico</label>
+          <input type="tel" id="cl-tel" placeholder="+351 912 345 678" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="cl-email" placeholder="exemplo@email.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo de documento de identificação</label>
+          <select id="cl-doc-tipo" onchange="toggleClienteDoc()">
+            <option value="">Selecione o documento</option>
+            <option value="bi">Bilhete de Identidade (BI)</option>
+            <option value="cc">Cartão de Cidadão</option>
+            <option value="res">Título de Residência</option>
+          </select>
+        </div>
+        <div class="form-group" id="cl-doc-number-group" style="display:none;">
+          <label class="form-label" id="cl-doc-number-label">Número do documento</label>
+          <input type="text" id="cl-doc-num" placeholder="Ex: 12345678" />
+        </div>
+
+        <div class="security-note">
+          <span style="font-size:16px; flex-shrink:0;">🔒</span>
+          <span>Os seus dados são tratados com total confidencialidade e usados apenas para verificação de identidade e segurança da plataforma.</span>
+        </div>
+
+        <div class="nav">
+          <button class="btn" onclick="goTo('s1')">← Voltar</button>
+          <button class="btn btn-primary" onclick="goTo('s3')">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- PASSO 3 — Detalhes do pedido -->
+      <div id="s3" class="screen">
+        <div class="progress-bar">
+          <div class="step-dot done">✓</div><div class="step-line"></div>
+          <div class="step-dot done">✓</div><div class="step-line"></div>
+          <div class="step-dot active">3</div><div class="step-line"></div>
+          <div class="step-dot future">4</div><div class="step-line"></div>
+          <div class="step-dot future">5</div>
+        </div>
+        <div class="section-title">Detalhes do pedido</div>
+        <div class="section-sub">Quando e onde precisa de ajuda</div>
+
+        <div class="form-group">
+          <label class="form-label">Localidade</label>
+          <input type="text" placeholder="Ex: Cascais, Lisboa" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data do serviço</label>
+          <input type="date" id="pedido-data" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Horário de início</label>
+          <input type="time" id="pedido-hora-inicio" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Horário de término</label>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input type="time" id="pedido-hora-fim" style="flex:1;" />
+            <button type="button" id="btn-sem-termino" onclick="toggleSemTermino()" style="
+              flex-shrink:0; padding:10px 12px; font-size:12px; font-weight:600;
+              border:1px solid var(--border2); border-radius:var(--radius-sm);
+              background:var(--surface); color:var(--text2);
+              cursor:pointer; font-family:inherit; white-space:nowrap;
+              transition:background 0.15s, color 0.15s, border-color 0.15s;
+            ">Sem término definido</button>
+          </div>
+          <div id="sem-termino-note" style="display:none; font-size:12px; color:var(--green-mid); margin-top:6px; display:none;">
+            ✓ O cuidador será informado que o horário de fim é flexível.
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Detalhes adicionais</label>
+          <textarea placeholder="Ex: precisa de transporte, tem dificuldade de locomoção, trazer documentos..."></textarea>
+        </div>
+
+        <div class="nav">
+          <button class="btn" onclick="goTo('s2')">← Voltar</button>
+          <button class="btn btn-primary" onclick="goTo('s4')">Ver cuidadores →</button>
+        </div>
+      </div>
+
+      <!-- PASSO 4 — Cuidadores disponíveis -->
+      <div id="s4" class="screen">
+        <div class="progress-bar">
+          <div class="step-dot done">✓</div><div class="step-line"></div>
+          <div class="step-dot done">✓</div><div class="step-line"></div>
+          <div class="step-dot done">✓</div><div class="step-line"></div>
+          <div class="step-dot active">4</div><div class="step-line"></div>
+          <div class="step-dot future">5</div>
+        </div>
+        <div class="section-title">Cuidadores disponíveis</div>
+        <div class="section-sub">3 pessoas verificadas disponíveis na sua área</div>
+        <div class="filter-row">
+          <button class="filter-chip active">Todos</button>
+          <button class="filter-chip" onclick="filterChip(this)">Melhor avaliados</button>
+          <button class="filter-chip" onclick="filterChip(this)">Mais próximos</button>
+        </div>
+
+        <div class="carer-card">
+          <div class="avatar av-teal">AS</div>
+          <div style="flex:1">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
+              <div class="carer-name">Ana Sousa</div>
+              <span class="badge badge-teal">Verificada ✓</span>
+            </div>
+            <div class="stars">★★★★★ <span style="color:var(--text2); font-size:11px;">4.9 (23 ajudas)</span></div>
+            <div class="carer-loc">Cascais · 1,2 km · €10/hora</div>
+            <div class="tag-row">
+              <span class="tag">Consultas</span>
+              <span class="tag">Exames</span>
+              <span class="tag">Transporte próprio</span>
+            </div>
+            <button class="btn btn-primary" style="margin-top:10px; padding:7px 16px; font-size:12px;" onclick="goTo('s5')">Solicitar Ana →</button>
+          </div>
+        </div>
+
+        <div class="carer-card">
+          <div class="avatar av-blue">MF</div>
+          <div style="flex:1">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
+              <div class="carer-name">Miguel Ferreira</div>
+              <span class="badge badge-teal">Verificado ✓</span>
+            </div>
+            <div class="stars">★★★★☆ <span style="color:var(--text2); font-size:11px;">4.6 (41 ajudas)</span></div>
+            <div class="carer-loc">Cascais · 2,5 km · €8/hora</div>
+            <div class="tag-row">
+              <span class="tag">Compras</span>
+              <span class="tag">Contas</span>
+              <span class="tag">Passeios</span>
+            </div>
+            <button class="btn" style="margin-top:10px; padding:7px 16px; font-size:12px;" onclick="alert('Perfil completo disponível na versão final!')">Ver perfil</button>
+          </div>
+        </div>
+
+        <div class="carer-card">
+          <div class="avatar av-coral">LC</div>
+          <div style="flex:1">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
+              <div class="carer-name">Luísa Costa</div>
+              <span class="badge badge-teal">Verificada ✓</span>
+            </div>
+            <div class="stars">★★★★★ <span style="color:var(--text2); font-size:11px;">4.8 (17 ajudas)</span></div>
+            <div class="carer-loc">Estoril · 3,1 km · €9/hora</div>
+            <div class="tag-row">
+              <span class="tag">Todos os serviços</span>
+              <span class="tag">Fala inglês</span>
+            </div>
+            <button class="btn" style="margin-top:10px; padding:7px 16px; font-size:12px;" onclick="alert('Perfil completo disponível na versão final!')">Ver perfil</button>
+          </div>
+        </div>
+
+        <div class="nav">
+          <button class="btn" onclick="goTo('s3')">← Voltar</button>
+        </div>
+      </div>
+
+      <!-- PASSO 5 — Confirmação -->
+      <div id="s5" class="screen">
+        <div class="progress-bar">
+          <div class="step-dot done">✓</div><div class="step-line"></div>
+          <div class="step-dot done">✓</div><div class="step-line"></div>
+          <div class="step-dot done">✓</div><div class="step-line"></div>
+          <div class="step-dot done">✓</div><div class="step-line"></div>
+          <div class="step-dot active">5</div>
+        </div>
+        <div class="confirm-box">
+          <div class="confirm-icon">✅</div>
+          <div class="confirm-title">Pedido enviado à Ana!</div>
+          <div class="confirm-sub">Ela receberá uma notificação e entrará em contacto em breve pelo número fornecido.</div>
+        </div>
+        <div class="info-card">
+          <div style="font-size:13px; font-weight:600; margin-bottom:8px;">Resumo do pedido</div>
+          <div class="info-row"><span class="info-key">Serviço</span><span class="info-val">Consulta médica</span></div>
+          <div class="info-row"><span class="info-key">Cuidadora</span><span class="info-val">Ana Sousa</span></div>
+          <div class="info-row"><span class="info-key">Local</span><span class="info-val">Cascais</span></div>
+          <div class="info-row"><span class="info-key">Estado</span><span class="info-val status-ok">Aguardando confirmação</span></div>
+        </div>
+        <button class="btn btn-block" style="margin-top:1rem;" onclick="goTo('s1')">Fazer outro pedido</button>
+      </div>
+    </div>
+
+    <!-- ===================== CUIDADOR ===================== -->
+    <div id="view-cuidador" style="display:none;">
+
+      <!-- ETAPA 1 — Dados pessoais -->
+      <div id="c1" class="screen active">
+        <div class="progress-bar">
+          <div class="step-dot active">1</div><div class="step-line"></div>
+          <div class="step-dot future">2</div><div class="step-line"></div>
+          <div class="step-dot future">3</div>
+        </div>
+        <div class="section-title">Os seus dados pessoais</div>
+        <div class="section-sub">Precisamos verificar a sua identidade antes de receber pedidos</div>
+
+        <div class="form-group">
+          <label class="form-label">Nome completo</label>
+          <input type="text" id="c-nome" placeholder="Ex: João Manuel Ferreira" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data de nascimento</label>
+          <input type="date" id="c-nasc" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Morada completa</label>
+          <input type="text" id="c-morada" placeholder="Rua, número, código postal, localidade" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contacto telefónico</label>
+          <input type="tel" id="c-tel" placeholder="+351 912 345 678" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="c-email" placeholder="exemplo@email.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo de documento de identificação</label>
+          <select id="c-doc-tipo" onchange="toggleCuidadorDoc()">
+            <option value="">Selecione o documento</option>
+            <option value="bi">Bilhete de Identidade (BI)</option>
+            <option value="cc">Cartão de Cidadão</option>
+            <option value="res">Título de Residência</option>
+          </select>
+        </div>
+        <div class="form-group" id="c-doc-number-group" style="display:none;">
+          <label class="form-label" id="c-doc-number-label">Número do documento</label>
+          <input type="text" id="c-doc-num" placeholder="Ex: 12345678" />
+        </div>
+
+        <div class="security-note">
+          <span style="font-size:16px; flex-shrink:0;">🔒</span>
+          <span>Os seus dados são tratados com total confidencialidade e usados apenas para verificação de identidade.</span>
+        </div>
+
+        <div class="nav">
+          <div></div>
+          <button class="btn btn-primary" onclick="goToCuidador('c2')">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- ETAPA 2 — Subscrição -->
+      <div id="c2" class="screen">
+        <div class="progress-bar">
+          <div class="step-dot done">✓</div><div class="step-line"></div>
+          <div class="step-dot active">2</div><div class="step-line"></div>
+          <div class="step-dot future">3</div>
+        </div>
+        <div class="section-title">Subscrição mensal</div>
+        <div class="section-sub">Acesso completo à plataforma por apenas €12,99/mês</div>
+
+        <div style="background:var(--green-pale); border:1px solid var(--green-light); border-radius:var(--radius); padding:1.25rem; margin-bottom:1.25rem; text-align:center;">
+          <div style="font-size:13px; color:var(--green-mid); margin-bottom:4px; font-weight:600;">PLANO CUIDADOR</div>
+          <div style="font-size:36px; font-weight:700; color:var(--green-dark);">€12,99<span style="font-size:14px; font-weight:400; color:var(--green-mid);">/mês</span></div>
+          <div style="font-size:12px; color:var(--green-mid); margin-top:4px;">Cancele quando quiser · Sem compromisso</div>
+        </div>
+
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1rem 1.25rem; margin-bottom:1.25rem;">
+          <div style="font-size:13px; font-weight:600; margin-bottom:10px;">O que está incluído:</div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; gap:8px; align-items:center; font-size:13px;"><span style="color:var(--green-main);">✓</span> Acesso a todos os pedidos na sua área</div>
+            <div style="display:flex; gap:8px; align-items:center; font-size:13px;"><span style="color:var(--green-main);">✓</span> Perfil verificado com selo de confiança</div>
+            <div style="display:flex; gap:8px; align-items:center; font-size:13px;"><span style="color:var(--green-main);">✓</span> Notificações de novos pedidos em tempo real</div>
+            <div style="display:flex; gap:8px; align-items:center; font-size:13px;"><span style="color:var(--green-main);">✓</span> Sistema de avaliações e reputação</div>
+            <div style="display:flex; gap:8px; align-items:center; font-size:13px;"><span style="color:var(--green-main);">✓</span> Suporte prioritário</div>
+          </div>
+        </div>
+
+        <div style="font-size:13px; font-weight:600; margin-bottom:10px;">Dados de pagamento</div>
+        <div class="form-group">
+          <label class="form-label">Número do cartão</label>
+          <input type="text" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)" />
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="form-group">
+            <label class="form-label">Validade</label>
+            <input type="text" placeholder="MM/AA" maxlength="5" oninput="formatExpiry(this)" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">CVV</label>
+            <input type="text" placeholder="123" maxlength="3" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nome no cartão</label>
+          <input type="text" placeholder="Como aparece no cartão" />
+        </div>
+
+        <div style="display:flex; gap:8px; align-items:flex-start; margin-bottom:1rem;">
+          <input type="checkbox" id="termos" style="width:auto; margin-top:3px;" />
+          <label for="termos" style="font-size:12px; color:var(--text2); line-height:1.5; cursor:pointer;">Aceito os <span style="color:var(--green-mid); text-decoration:underline;">Termos e Condições</span> e autorizo a cobrança mensal de €12,99 até cancelar a subscrição.</label>
+        </div>
+
+        <div style="display:flex; gap:6px; align-items:center; margin-bottom:1.25rem; justify-content:center;">
+          <span style="font-size:11px; color:var(--text3);">🔒 Pagamento seguro SSL · Visa · Mastercard · MB Way</span>
+        </div>
+
+        <div class="nav">
+          <button class="btn" onclick="goToCuidador('c1')">← Voltar</button>
+          <button class="btn btn-primary" onclick="goToCuidador('c3')">Pagar €12,99 →</button>
+        </div>
+      </div>
+
+      <!-- ETAPA 3 — Pedidos disponíveis -->
+      <div id="c3" class="screen">
+        <div class="progress-bar">
+          <div class="step-dot done">✓</div><div class="step-line"></div>
+          <div class="step-dot done">✓</div><div class="step-line"></div>
+          <div class="step-dot active">3</div>
+        </div>
+
+        <div style="background:var(--green-pale); border:1px solid var(--green-light); border-radius:var(--radius); padding:1.25rem; text-align:center; margin-bottom:1.5rem;">
+          <div style="font-size:28px; margin-bottom:6px;">🎉</div>
+          <div style="font-size:15px; font-weight:700; color:var(--green-dark); margin-bottom:4px;">Bem-vindo à plataforma!</div>
+          <div style="font-size:13px; color:var(--green-mid);">A sua conta foi ativada. Aqui estão os pedidos disponíveis na sua área.</div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+          <div class="section-title" style="margin:0;">Pedidos disponíveis</div>
+          <span class="badge badge-teal">4 novos</span>
+        </div>
+        <div class="section-sub">Lisboa e arredores · Hoje</div>
+
+        <div class="filter-row">
+          <button class="filter-chip active">Todos</button>
+          <button class="filter-chip" onclick="filterChip(this)">Consultas</button>
+          <button class="filter-chip" onclick="filterChip(this)">Compras</button>
+          <button class="filter-chip" onclick="filterChip(this)">Contas</button>
+          <button class="filter-chip" onclick="filterChip(this)">Passeios</button>
+        </div>
+
+        <div class="carer-card" style="flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div style="font-size:14px; font-weight:600;">Acompanhamento a consulta</div>
+              <div style="font-size:12px; color:var(--text2); margin-top:2px;">📍 Cascais · 🕐 Amanhã, 09h00</div>
+            </div>
+            <span class="badge badge-amber">Urgente</span>
+          </div>
+          <div style="font-size:13px; color:var(--text2); line-height:1.5;">Senhora de 78 anos precisa de acompanhamento ao Hospital de Cascais. Transporte próprio necessário.</div>
+          <div class="tag-row">
+            <span class="tag">Transporte</span><span class="tag">Acompanhamento</span><span class="tag">~2 horas</span>
+          </div>
+          <div style="display:flex; gap:8px; margin-top:4px;">
+            <button class="btn btn-primary" style="flex:1; font-size:13px; padding:8px;" onclick="alert('Candidatura enviada! O familiar entrará em contacto.')">Candidatar-me →</button>
+            <button class="btn" style="font-size:13px; padding:8px 14px;">Detalhes</button>
+          </div>
+        </div>
+
+        <div class="carer-card" style="flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div style="font-size:14px; font-weight:600;">Pagamento de contas e banco</div>
+              <div style="font-size:12px; color:var(--text2); margin-top:2px;">📍 Sintra · 🕐 Esta semana</div>
+            </div>
+            <span class="badge badge-blue">€8/hora</span>
+          </div>
+          <div style="font-size:13px; color:var(--text2); line-height:1.5;">Senhor de 82 anos precisa de ajuda para pagar contas na CGD e nos CTT.</div>
+          <div class="tag-row">
+            <span class="tag">Banco</span><span class="tag">Correios</span><span class="tag">~1 hora</span>
+          </div>
+          <div style="display:flex; gap:8px; margin-top:4px;">
+            <button class="btn btn-primary" style="flex:1; font-size:13px; padding:8px;" onclick="alert('Candidatura enviada! O familiar entrará em contacto.')">Candidatar-me →</button>
+            <button class="btn" style="font-size:13px; padding:8px 14px;">Detalhes</button>
+          </div>
+        </div>
+
+        <div class="carer-card" style="flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div style="font-size:14px; font-weight:600;">Compras no supermercado</div>
+              <div style="font-size:12px; color:var(--text2); margin-top:2px;">📍 Estoril · 🕐 Sábado manhã</div>
+            </div>
+            <span class="badge badge-teal">€15 fixo</span>
+          </div>
+          <div style="font-size:13px; color:var(--text2); line-height:1.5;">Casal de idosos precisa de alguém para fazer compras semanais no Continente. Lista já preparada.</div>
+          <div class="tag-row">
+            <span class="tag">Compras</span><span class="tag">Entrega em casa</span><span class="tag">~1.5 horas</span>
+          </div>
+          <div style="display:flex; gap:8px; margin-top:4px;">
+            <button class="btn btn-primary" style="flex:1; font-size:13px; padding:8px;" onclick="alert('Candidatura enviada! O familiar entrará em contacto.')">Candidatar-me →</button>
+            <button class="btn" style="font-size:13px; padding:8px 14px;">Detalhes</button>
+          </div>
+        </div>
+
+        <div class="carer-card" style="flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div style="font-size:14px; font-weight:600;">Passeio e companhia</div>
+              <div style="font-size:12px; color:var(--text2); margin-top:2px;">📍 Lisboa · 🕐 Flexível</div>
+            </div>
+            <span class="badge badge-blue">€9/hora</span>
+          </div>
+          <div style="font-size:13px; color:var(--text2); line-height:1.5;">Senhora de 75 anos gosta de passear no parque. Família procura alguém para fazer companhia 1x por semana.</div>
+          <div class="tag-row">
+            <span class="tag">Companhia</span><span class="tag">Passeio</span><span class="tag">~2 horas</span>
+          </div>
+          <div style="display:flex; gap:8px; margin-top:4px;">
+            <button class="btn btn-primary" style="flex:1; font-size:13px; padding:8px;" onclick="alert('Candidatura enviada! O familiar entrará em contacto.')">Candidatar-me →</button>
+            <button class="btn" style="font-size:13px; padding:8px 14px;">Detalhes</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer>Protótipo — Cuidar © 2026 Kevin. Todos os direitos reservados.</footer>
+
+  <script>
+    // ---- state ----
+    let selectedService = null;
+    const radioSelections = {};
+    let semTermino = false;
+
+    // ---- tab switch ----
+    function setTab(tab) {
+      document.getElementById('tab-cliente').classList.toggle('active', tab === 'cliente');
+      document.getElementById('tab-cuidador').classList.toggle('active', tab === 'cuidador');
+      document.getElementById('view-cliente').style.display = tab === 'cliente' ? 'block' : 'none';
+      document.getElementById('view-cuidador').style.display = tab === 'cuidador' ? 'block' : 'none';
+    }
+
+    // ---- screen navigation ----
+    function goTo(id) {
+      document.querySelectorAll('#view-cliente .screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goToCuidador(id) {
+      document.querySelectorAll('#view-cuidador .screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ---- service card selection ----
+    function selectService(service) {
+      // deselect all
+      document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+      document.getElementById('sub-contas').style.display = 'none';
+      document.getElementById('sub-compras').style.display = 'none';
+
+      selectedService = service;
+      document.getElementById('card-' + service).classList.add('selected');
+
+      if (service === 'contas') {
+        document.getElementById('sub-contas').style.display = 'block';
+      } else if (service === 'compras') {
+        document.getElementById('sub-compras').style.display = 'block';
+      }
+    }
+
+    // ---- radio selection (subcategories) ----
+    function selectRadio(group, value, el) {
+      radioSelections[group] = value;
+      el.closest('.subcategory-box').querySelectorAll('.radio-option').forEach(r => r.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    // ---- advance from s1 ----
+    function avancarS1() {
+      if (!selectedService) { alert('Por favor selecione um tipo de serviço.'); return; }
+      if (selectedService === 'outro') {
+        goTo('s1b');
+      } else {
+        goTo('s2');
+      }
+    }
+
+    // ---- checkbox toggle (Outro screen) ----
+    function toggleCheckbox(el) {
+      el.classList.toggle('selected');
+    }
+
+    // ---- filter chips ----
+    function filterChip(el) {
+      el.closest('.filter-row').querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // ---- identification fields ----
+    function toggleClienteDoc() {
+      const tipo = document.getElementById('cl-doc-tipo').value;
+      const group = document.getElementById('cl-doc-number-group');
+      const label = document.getElementById('cl-doc-number-label');
+      group.style.display = tipo ? 'block' : 'none';
+      const labels = { bi: 'Número do BI', cc: 'Número do Cartão de Cidadão', res: 'Número do Título de Residência' };
+      label.textContent = labels[tipo] || 'Número do documento';
+    }
+
+    function toggleCuidadorDoc() {
+      const tipo = document.getElementById('c-doc-tipo').value;
+      const group = document.getElementById('c-doc-number-group');
+      const label = document.getElementById('c-doc-number-label');
+      group.style.display = tipo ? 'block' : 'none';
+      const labels = { bi: 'Número do BI', cc: 'Número do Cartão de Cidadão', res: 'Número do Título de Residência' };
+      label.textContent = labels[tipo] || 'Número do documento';
+    }
+
+    // ---- sem término ----
+    function toggleSemTermino() {
+      semTermino = !semTermino;
+      const btn = document.getElementById('btn-sem-termino');
+      const horaFim = document.getElementById('pedido-hora-fim');
+      const note = document.getElementById('sem-termino-note');
+      if (semTermino) {
+        btn.style.background = 'var(--green-pale)';
+        btn.style.color = 'var(--green-mid)';
+        btn.style.borderColor = 'var(--green-main)';
+        horaFim.disabled = true; horaFim.style.opacity = '0.4'; horaFim.value = '';
+        note.style.display = 'block';
+      } else {
+        btn.style.background = 'var(--surface)'; btn.style.color = 'var(--text2)'; btn.style.borderColor = 'var(--border2)';
+        horaFim.disabled = false; horaFim.style.opacity = '1';
+        note.style.display = 'none';
+      }
+    }
+
+    // ---- card formatters ----
+    function formatCard(input) {
+      let v = input.value.replace(/\D/g, '').substring(0, 16);
+      input.value = v.replace(/(.{4})/g, '$1 ').trim();
+    }
+
+    function formatExpiry(input) {
+      let v = input.value.replace(/\D/g, '').substring(0, 4);
+      if (v.length >= 2) v = v.substring(0, 2) + '/' + v.substring(2);
+      input.value = v;
+    }
+  </script>
+</body>
+</html>
