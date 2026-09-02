@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cuidar — Conectando gerações com cuidado</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -35,28 +36,40 @@
       --radius-sm: 8px;
     }
 
+    html { min-height: 100%; }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 1.5rem 1rem 3rem;
+      padding: 2rem 1rem 3rem;
       color: var(--text);
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 8% 12%, rgba(29,158,117,0.10), transparent 38%),
+        radial-gradient(circle at 92% 8%, rgba(24,95,165,0.08), transparent 36%),
+        radial-gradient(circle at 15% 92%, rgba(93,202,165,0.14), transparent 42%),
+        radial-gradient(circle at 96% 88%, rgba(186,117,23,0.07), transparent 34%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%230F6E56' stroke-opacity='0.06' stroke-width='1.4'%3E%3Cpath d='M20 30c8-14 24-14 30 0-8 14-24 14-30 0z'/%3E%3Cpath d='M80 90c8-14 24-14 30 0-8 14-24 14-30 0z'/%3E%3Ccircle cx='100' cy='20' r='6'/%3E%3Ccircle cx='14' cy='100' r='6'/%3E%3C/g%3E%3C/svg%3E");
+      background-attachment: fixed, fixed, fixed, fixed, fixed;
+      background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
     }
 
     header {
       width: 100%;
-      max-width: 480px;
+      max-width: 520px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .brand { display: flex; flex-direction: column; }
-    .brand-name { font-size: 20px; font-weight: 600; color: var(--green-mid); letter-spacing: -0.3px; }
+    .brand-name { font-size: 21px; font-weight: 700; color: var(--green-mid); letter-spacing: -0.3px; }
     .brand-sub { font-size: 11px; color: var(--text3); }
 
     .toggle-row {
@@ -64,6 +77,8 @@
       border: 0.5px solid var(--border2);
       border-radius: var(--radius-sm);
       overflow: hidden;
+      background: var(--surface);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
     .toggle-btn {
       padding: 7px 12px;
@@ -76,12 +91,20 @@
       font-family: inherit;
     }
     .toggle-btn.active {
-      background: var(--surface2);
-      color: var(--text);
+      background: var(--green-mid);
+      color: #fff;
       font-weight: 600;
     }
 
-    .main { width: 100%; max-width: 480px; }
+    .main {
+      width: 100%;
+      max-width: 520px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem 1.5rem 2rem;
+      box-shadow: 0 20px 45px rgba(8, 80, 65, 0.09), 0 2px 8px rgba(0,0,0,0.04);
+    }
     .screen { display: none; }
     .screen.active { display: block; }
 
@@ -99,7 +122,7 @@
       flex-shrink: 0;
     }
     .step-dot.done { background: var(--green-main); color: #fff; }
-    .step-dot.active { background: var(--green-mid); color: #fff; }
+    .step-dot.active { background: var(--green-mid); color: #fff; box-shadow: 0 0 0 4px var(--green-pale); }
     .step-dot.future { background: var(--surface2); color: var(--text3); border: 0.5px solid var(--border); }
     .step-line { flex: 1; height: 1px; background: var(--border); }
 
@@ -120,11 +143,11 @@
       border-radius: var(--radius);
       padding: 0.85rem 0.5rem;
       cursor: pointer;
-      transition: border-color 0.15s, transform 0.1s, background 0.15s;
+      transition: border-color 0.15s, transform 0.1s, background 0.15s, box-shadow 0.15s;
       text-align: center;
       user-select: none;
     }
-    .service-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+    .service-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,0.06); }
     .service-card.selected { border: 2px solid var(--green-main); background: var(--green-pale); }
     .service-icon { font-size: 26px; margin-bottom: 6px; }
     .service-label { font-size: 12px; font-weight: 600; color: var(--text); }
@@ -132,7 +155,7 @@
 
     .form-group { margin-bottom: 1rem; }
     .form-label { font-size: 13px; color: var(--text2); margin-bottom: 5px; display: block; font-weight: 500; }
-    input[type=text], input[type=tel], input[type=date], input[type=email], textarea, select {
+    input[type=text], input[type=tel], input[type=date], input[type=time], input[type=email], input[type=number], textarea, select {
       width: 100%;
       padding: 10px 12px;
       border: 1px solid var(--border2);
@@ -146,6 +169,7 @@
     }
     input:focus, textarea:focus, select:focus { border-color: var(--green-main); box-shadow: 0 0 0 3px rgba(29,158,117,0.12); }
     textarea { min-height: 80px; resize: vertical; line-height: 1.5; }
+    .field-hint { font-size: 11px; color: var(--text3); margin-top: 5px; line-height: 1.4; }
 
     .btn {
       display: inline-flex; align-items: center; justify-content: center;
@@ -175,7 +199,9 @@
       display: flex;
       gap: 12px;
       align-items: flex-start;
+      transition: box-shadow 0.15s, border-color 0.15s;
     }
+    .carer-card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.06); border-color: var(--border2); }
     .avatar {
       width: 46px; height: 46px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
@@ -279,6 +305,58 @@
     .checkbox-option.selected .checkbox-box { background: var(--green-main); border-color: var(--green-main); }
     .checkbox-label { font-size: 13px; font-weight: 500; color: var(--text); }
     .checkbox-desc { font-size: 11px; color: var(--text2); margin-top: 1px; }
+
+    .map-box { height: 220px; border-radius: var(--radius); overflow: hidden; margin-top: 8px; border: 1px solid var(--border2); background: var(--surface2); }
+    .rate-input-row { display: flex; align-items: center; gap: 8px; }
+    .rate-input-row .rate-prefix { font-size: 14px; font-weight: 600; color: var(--text2); }
+    .rate-input-row input { flex: 1; }
+    .rate-input-row .rate-suffix { font-size: 12px; color: var(--text2); white-space: nowrap; }
+
+    #toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(8px);
+      background: var(--green-dark); color: #fff; padding: 12px 20px; border-radius: 30px;
+      font-size: 13px; font-weight: 600; box-shadow: 0 10px 28px rgba(0,0,0,0.22);
+      z-index: 9999; opacity: 0; transition: opacity 0.25s ease, transform 0.25s ease;
+      max-width: 90%; text-align: center; pointer-events: none;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .back-link {
+      background: none; border: none; font-family: inherit;
+      font-size: 12px; font-weight: 600; color: var(--text2);
+      cursor: pointer; padding: 6px 4px; transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--green-mid); }
+
+    .landing-wrap { text-align: center; padding: 0.5rem 0 0.25rem; }
+    .landing-title { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 6px; }
+    .landing-sub { font-size: 13.5px; color: var(--text2); }
+
+    .landing-options {
+      display: flex; flex-direction: column; gap: 16px;
+      margin-top: 1.75rem;
+    }
+    @media (min-width: 480px) {
+      .landing-options { flex-direction: row; }
+    }
+
+    .landing-card {
+      flex: 1;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      padding: 2.25rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.18s, background 0.18s, transform 0.15s, box-shadow 0.18s;
+    }
+    .landing-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(0,0,0,0.08); }
+    .landing-card.role-cliente:hover { border-color: var(--green-main); background: var(--green-pale); }
+    .landing-card.role-cuidador:hover { border-color: var(--blue-mid); background: var(--blue-pale); }
+    .landing-icon { font-size: 46px; margin-bottom: 16px; }
+    .landing-card-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .landing-card-desc { font-size: 12.5px; color: var(--text2); line-height: 1.55; }
   </style>
 </head>
 <body>
@@ -288,13 +366,36 @@
       <div class="brand-name">🌿 Cuidar</div>
       <div class="brand-sub">conectando gerações com cuidado</div>
     </div>
-    <div class="toggle-row">
-      <button class="toggle-btn active" id="tab-cliente" onclick="setTab('cliente')">Preciso de ajuda</button>
-      <button class="toggle-btn" id="tab-cuidador" onclick="setTab('cuidador')">Quero ajudar</button>
+    <div id="header-controls" style="display:none; align-items:center; gap:10px;">
+      <button class="back-link" onclick="goToLanding()">← Início</button>
+      <div class="toggle-row">
+        <button class="toggle-btn active" id="tab-cliente" onclick="setTab('cliente')">Preciso de ajuda</button>
+        <button class="toggle-btn" id="tab-cuidador" onclick="setTab('cuidador')">Quero ajudar</button>
+      </div>
     </div>
   </header>
 
-  <div class="main">
+  <!-- ===================== CAPA INICIAL ===================== -->
+  <div class="main" id="landing">
+    <div class="landing-wrap">
+      <div class="landing-title">O que precisa hoje?</div>
+      <div class="landing-sub">Escolha uma opção para continuar</div>
+    </div>
+    <div class="landing-options">
+      <div class="landing-card role-cliente" onclick="chooseRole('cliente')">
+        <div class="landing-icon">🙋</div>
+        <div class="landing-card-title">Quero contratar um serviço</div>
+        <div class="landing-card-desc">Preciso de ajuda para mim ou para um familiar — consultas, compras, contas, passeios e mais.</div>
+      </div>
+      <div class="landing-card role-cuidador" onclick="chooseRole('cuidador')">
+        <div class="landing-icon">🤝</div>
+        <div class="landing-card-title">Quero oferecer um serviço</div>
+        <div class="landing-card-desc">Sou cuidador(a) e quero ajudar pessoas na minha área, definindo o meu próprio horário e valor por hora.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main" id="app-main" style="display:none;">
 
     <!-- ===================== CLIENTE ===================== -->
     <div id="view-cliente">
@@ -402,21 +503,21 @@
 
         <div style="margin-bottom: 1rem;">
           <div class="checkbox-option" onclick="toggleCheckbox(this)">
-            <div class="checkbox-box">✕</div>
+            <div class="checkbox-box">✓</div>
             <div>
               <div class="checkbox-label">Acompanhamento a viagem</div>
               <div class="checkbox-desc">Suporte em deslocações de comboio, autocarro ou avião</div>
             </div>
           </div>
           <div class="checkbox-option" onclick="toggleCheckbox(this)">
-            <div class="checkbox-box">✕</div>
+            <div class="checkbox-box">✓</div>
             <div>
               <div class="checkbox-label">Companhia ao domicílio</div>
               <div class="checkbox-desc">Presença e companhia em casa durante algumas horas</div>
             </div>
           </div>
           <div class="checkbox-option" onclick="toggleCheckbox(this)">
-            <div class="checkbox-box">✕</div>
+            <div class="checkbox-box">✓</div>
             <div>
               <div class="checkbox-label">Tarefas domésticas</div>
               <div class="checkbox-desc">Limpeza leve, organização ou preparação de refeições</div>
@@ -457,7 +558,12 @@
         </div>
         <div class="form-group">
           <label class="form-label">Morada completa</label>
-          <input type="text" id="cl-morada" placeholder="Rua, número, código postal, localidade" />
+          <input type="text" id="cl-morada" oninput="onMoradaInput()" placeholder="Rua, número, código postal, localidade" />
+          <button type="button" class="btn btn-block" style="margin-top:8px; font-size:12.5px; padding:9px;" onclick="requestUserLocation()">📍 Usar a minha localização atual (GPS)</button>
+          <div class="map-box" id="cl-map">
+            <div id="cl-map-status" style="height:100%; display:flex; align-items:center; justify-content:center; text-align:center; padding:12px; font-size:12px; color:var(--text2);">A carregar mapa…</div>
+          </div>
+          <div class="field-hint">Escreva a morada, toque em "Usar a minha localização atual" ou clique/arraste o marcador no mapa para localizar com precisão.</div>
         </div>
         <div class="form-group">
           <label class="form-label">Contacto telefónico</label>
@@ -528,7 +634,7 @@
               transition:background 0.15s, color 0.15s, border-color 0.15s;
             ">Sem término definido</button>
           </div>
-          <div id="sem-termino-note" style="display:none; font-size:12px; color:var(--green-mid); margin-top:6px; display:none;">
+          <div id="sem-termino-note" style="display:none; font-size:12px; color:var(--green-mid); margin-top:6px;">
             ✓ O cuidador será informado que o horário de fim é flexível.
           </div>
         </div>
@@ -592,7 +698,7 @@
               <span class="tag">Contas</span>
               <span class="tag">Passeios</span>
             </div>
-            <button class="btn" style="margin-top:10px; padding:7px 16px; font-size:12px;" onclick="alert('Perfil completo disponível na versão final!')">Ver perfil</button>
+            <button class="btn" style="margin-top:10px; padding:7px 16px; font-size:12px;" onclick="showToast('Perfil completo disponível em breve.')">Ver perfil</button>
           </div>
         </div>
 
@@ -609,7 +715,7 @@
               <span class="tag">Todos os serviços</span>
               <span class="tag">Fala inglês</span>
             </div>
-            <button class="btn" style="margin-top:10px; padding:7px 16px; font-size:12px;" onclick="alert('Perfil completo disponível na versão final!')">Ver perfil</button>
+            <button class="btn" style="margin-top:10px; padding:7px 16px; font-size:12px;" onclick="showToast('Perfil completo disponível em breve.')">Ver perfil</button>
           </div>
         </div>
 
@@ -675,6 +781,15 @@
         <div class="form-group">
           <label class="form-label">Email</label>
           <input type="email" id="c-email" placeholder="exemplo@email.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Quanto deseja cobrar por hora?</label>
+          <div class="rate-input-row">
+            <span class="rate-prefix">€</span>
+            <input type="number" id="c-preco-hora" min="5" step="0.5" placeholder="Ex: 9.00" />
+            <span class="rate-suffix">/ hora</span>
+          </div>
+          <div class="field-hint">Este valor aparece no seu perfil para os familiares que procuram ajuda. Pode alterá-lo quando quiser.</div>
         </div>
         <div class="form-group">
           <label class="form-label">Tipo de documento de identificação</label>
@@ -804,7 +919,7 @@
             <span class="tag">Transporte</span><span class="tag">Acompanhamento</span><span class="tag">~2 horas</span>
           </div>
           <div style="display:flex; gap:8px; margin-top:4px;">
-            <button class="btn btn-primary" style="flex:1; font-size:13px; padding:8px;" onclick="alert('Candidatura enviada! O familiar entrará em contacto.')">Candidatar-me →</button>
+            <button class="btn btn-primary" style="flex:1; font-size:13px; padding:8px;" onclick="showToast('Candidatura enviada! O familiar entrará em contacto.')">Candidatar-me →</button>
             <button class="btn" style="font-size:13px; padding:8px 14px;">Detalhes</button>
           </div>
         </div>
@@ -822,7 +937,7 @@
             <span class="tag">Banco</span><span class="tag">Correios</span><span class="tag">~1 hora</span>
           </div>
           <div style="display:flex; gap:8px; margin-top:4px;">
-            <button class="btn btn-primary" style="flex:1; font-size:13px; padding:8px;" onclick="alert('Candidatura enviada! O familiar entrará em contacto.')">Candidatar-me →</button>
+            <button class="btn btn-primary" style="flex:1; font-size:13px; padding:8px;" onclick="showToast('Candidatura enviada! O familiar entrará em contacto.')">Candidatar-me →</button>
             <button class="btn" style="font-size:13px; padding:8px 14px;">Detalhes</button>
           </div>
         </div>
@@ -840,7 +955,7 @@
             <span class="tag">Compras</span><span class="tag">Entrega em casa</span><span class="tag">~1.5 horas</span>
           </div>
           <div style="display:flex; gap:8px; margin-top:4px;">
-            <button class="btn btn-primary" style="flex:1; font-size:13px; padding:8px;" onclick="alert('Candidatura enviada! O familiar entrará em contacto.')">Candidatar-me →</button>
+            <button class="btn btn-primary" style="flex:1; font-size:13px; padding:8px;" onclick="showToast('Candidatura enviada! O familiar entrará em contacto.')">Candidatar-me →</button>
             <button class="btn" style="font-size:13px; padding:8px 14px;">Detalhes</button>
           </div>
         </div>
@@ -858,7 +973,7 @@
             <span class="tag">Companhia</span><span class="tag">Passeio</span><span class="tag">~2 horas</span>
           </div>
           <div style="display:flex; gap:8px; margin-top:4px;">
-            <button class="btn btn-primary" style="flex:1; font-size:13px; padding:8px;" onclick="alert('Candidatura enviada! O familiar entrará em contacto.')">Candidatar-me →</button>
+            <button class="btn btn-primary" style="flex:1; font-size:13px; padding:8px;" onclick="showToast('Candidatura enviada! O familiar entrará em contacto.')">Candidatar-me →</button>
             <button class="btn" style="font-size:13px; padding:8px 14px;">Detalhes</button>
           </div>
         </div>
@@ -868,13 +983,24 @@
 
   </div>
 
-  <footer>Protótipo — Cuidar © 2026 Kevin. Todos os direitos reservados.</footer>
+  <footer>© 2026 Cuidar. Todos os direitos reservados.</footer>
+  <div id="toast"></div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     // ---- state ----
     let selectedService = null;
     const radioSelections = {};
     let semTermino = false;
+
+    // ---- toast ----
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._hideTimeout);
+      t._hideTimeout = setTimeout(() => t.classList.remove('show'), 2800);
+    }
 
     // ---- tab switch ----
     function setTab(tab) {
@@ -884,11 +1010,28 @@
       document.getElementById('view-cuidador').style.display = tab === 'cuidador' ? 'block' : 'none';
     }
 
+    // ---- capa inicial (landing) ----
+    function chooseRole(role) {
+      setTab(role);
+      document.getElementById('landing').style.display = 'none';
+      document.getElementById('app-main').style.display = 'block';
+      document.getElementById('header-controls').style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goToLanding() {
+      document.getElementById('app-main').style.display = 'none';
+      document.getElementById('header-controls').style.display = 'none';
+      document.getElementById('landing').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     // ---- screen navigation ----
     function goTo(id) {
       document.querySelectorAll('#view-cliente .screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (id === 's2') initClienteMap();
     }
 
     function goToCuidador(id) {
@@ -923,7 +1066,7 @@
 
     // ---- advance from s1 ----
     function avancarS1() {
-      if (!selectedService) { alert('Por favor selecione um tipo de serviço.'); return; }
+      if (!selectedService) { showToast('Selecione um tipo de serviço para continuar.'); return; }
       if (selectedService === 'outro') {
         goTo('s1b');
       } else {
@@ -990,6 +1133,117 @@
       let v = input.value.replace(/\D/g, '').substring(0, 4);
       if (v.length >= 2) v = v.substring(0, 2) + '/' + v.substring(2);
       input.value = v;
+    }
+
+    // ---- map (morada do cliente) ----
+    let clienteMap, clienteMarker, mapInited = false;
+    const LISBOA = [38.7223, -9.1393];
+
+    function showMapError(msg) {
+      const box = document.getElementById('cl-map');
+      box.innerHTML = '<div style="height:100%; display:flex; align-items:center; justify-content:center; text-align:center; padding:12px; font-size:12px; color:var(--text2);">' + msg + '</div>';
+    }
+
+    function initClienteMap(retries) {
+      retries = retries || 0;
+      if (mapInited) {
+        setTimeout(() => clienteMap.invalidateSize(), 150);
+        return;
+      }
+      // Leaflet ainda pode não estar carregado (ligação lenta) - tenta novamente por alguns segundos.
+      if (typeof L === 'undefined') {
+        if (retries < 8) {
+          setTimeout(() => initClienteMap(retries + 1), 400);
+        } else {
+          showMapError('⚠️ Não foi possível carregar o mapa (falha ao ligar à internet ou o site está a correr num pré-visualizador com acesso à rede bloqueado). Abra o ficheiro diretamente num navegador para usar o mapa, ou continue escrevendo a morada manualmente acima.');
+        }
+        return;
+      }
+      const statusEl = document.getElementById('cl-map-status');
+      if (statusEl) statusEl.remove();
+      try {
+        clienteMap = L.map('cl-map', { zoomControl: true }).setView(LISBOA, 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors',
+          maxZoom: 19
+        }).addTo(clienteMap);
+        clienteMarker = L.marker(LISBOA, { draggable: true }).addTo(clienteMap);
+        clienteMarker.on('dragend', function (e) {
+          const pos = e.target.getLatLng();
+          reverseGeocode(pos.lat, pos.lng);
+        });
+        clienteMap.on('click', function (e) {
+          clienteMarker.setLatLng(e.latlng);
+          reverseGeocode(e.latlng.lat, e.latlng.lng);
+        });
+        mapInited = true;
+        setTimeout(() => clienteMap.invalidateSize(), 150);
+        setTimeout(() => clienteMap.invalidateSize(), 500);
+      } catch (err) {
+        console.log('Erro ao iniciar o mapa:', err);
+        showMapError('⚠️ Ocorreu um erro ao carregar o mapa. Pode continuar escrevendo a morada manualmente acima.');
+      }
+    }
+
+    // ---- localização atual via GPS do dispositivo ----
+    function requestUserLocation() {
+      if (!navigator.geolocation) {
+        showToast('O seu navegador não suporta localização automática.');
+        return;
+      }
+      showToast('A obter a sua localização…');
+      navigator.geolocation.getCurrentPosition(
+        function (pos) {
+          const lat = pos.coords.latitude, lon = pos.coords.longitude;
+          if (!mapInited) initClienteMap();
+          setTimeout(() => {
+            if (mapInited) {
+              clienteMap.setView([lat, lon], 16);
+              clienteMarker.setLatLng([lat, lon]);
+            }
+            reverseGeocode(lat, lon);
+            showToast('Localização atual definida.');
+          }, 350);
+        },
+        function (err) {
+          let msg = 'Não foi possível obter a sua localização.';
+          if (err && err.code === 1) msg = 'Permissão de localização negada. Ative-a nas definições do navegador.';
+          showToast(msg);
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    }
+
+    async function reverseGeocode(lat, lon) {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+        const data = await res.json();
+        if (data && data.display_name) {
+          document.getElementById('cl-morada').value = data.display_name;
+        }
+      } catch (err) {
+        console.log('Erro ao obter morada:', err);
+      }
+    }
+
+    let geocodeTimeout;
+    function onMoradaInput() {
+      clearTimeout(geocodeTimeout);
+      const val = document.getElementById('cl-morada').value;
+      if (val.length < 5 || !mapInited) return;
+      geocodeTimeout = setTimeout(async () => {
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&limit=1`);
+          const data = await res.json();
+          if (data && data[0]) {
+            const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
+            clienteMap.setView([lat, lon], 16);
+            clienteMarker.setLatLng([lat, lon]);
+          }
+        } catch (err) {
+          console.log('Erro na pesquisa de morada:', err);
+        }
+      }, 900);
     }
   </script>
 </body>
