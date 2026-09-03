@@ -3,37 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cuidar — Conectando gerações com cuidado</title>
+  <title>K-Care Software — Cuidar | Conectando gerações com cuidado</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --green-dark: #085041;
-      --green-mid: #0F6E56;
-      --green-main: #1D9E75;
-      --green-light: #5DCAA5;
-      --green-pale: #E1F5EE;
+      --green-dark: #0A3C63;
+      --green-mid: #0E6FA3;
+      --green-main: #1C93C7;
+      --green-light: #6FD4EC;
+      --green-pale: #EAF6FC;
       --blue-pale: #E6F1FB;
-      --blue-mid: #185FA5;
+      --blue-mid: #145E96;
       --blue-text: #0C447C;
-      --teal-light: #9FE1CB;
-      --coral-light: #F5C4B3;
-      --coral-text: #712B13;
-      --blue-avatar: #B5D4F4;
-      --amber-star: #BA7517;
-      --amber-text: #854F0B;
-      --amber-bg: #FAEEDA;
-      --bg: #f5f5f0;
+      --teal-light: #BEE7F5;
+      --coral-light: #CFE9F7;
+      --coral-text: #0A3C5F;
+      --blue-avatar: #AFD8F5;
+      --amber-star: #1C6FA5;
+      --amber-text: #0C447C;
+      --amber-bg: #EAF6FC;
+      --bg: #f3f8fc;
       --surface: #ffffff;
-      --surface2: #f0efea;
-      --border: rgba(0,0,0,0.12);
-      --border2: rgba(0,0,0,0.22);
-      --text: #1a1a18;
-      --text2: #6b6b66;
-      --text3: #9e9e99;
+      --surface2: #eef5fa;
+      --border: rgba(10,60,99,0.12);
+      --border2: rgba(10,60,99,0.24);
+      --text: #12283A;
+      --text2: #5C7488;
+      --text3: #8FA4B5;
       --radius: 12px;
       --radius-sm: 8px;
+      --kcare-blue-light: #6FD4EC;
+      --kcare-blue-dark: #0E3C63;
     }
 
     html { min-height: 100%; }
@@ -48,11 +50,11 @@
       color: var(--text);
       background-color: var(--bg);
       background-image:
-        radial-gradient(circle at 8% 12%, rgba(29,158,117,0.10), transparent 38%),
-        radial-gradient(circle at 92% 8%, rgba(24,95,165,0.08), transparent 36%),
-        radial-gradient(circle at 15% 92%, rgba(93,202,165,0.14), transparent 42%),
-        radial-gradient(circle at 96% 88%, rgba(186,117,23,0.07), transparent 34%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%230F6E56' stroke-opacity='0.06' stroke-width='1.4'%3E%3Cpath d='M20 30c8-14 24-14 30 0-8 14-24 14-30 0z'/%3E%3Cpath d='M80 90c8-14 24-14 30 0-8 14-24 14-30 0z'/%3E%3Ccircle cx='100' cy='20' r='6'/%3E%3Ccircle cx='14' cy='100' r='6'/%3E%3C/g%3E%3C/svg%3E");
+        radial-gradient(circle at 8% 12%, rgba(28,147,199,0.12), transparent 38%),
+        radial-gradient(circle at 92% 8%, rgba(14,111,163,0.10), transparent 36%),
+        radial-gradient(circle at 15% 92%, rgba(111,212,236,0.16), transparent 42%),
+        radial-gradient(circle at 96% 88%, rgba(14,60,99,0.07), transparent 34%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%230E6FA3' stroke-opacity='0.06' stroke-width='1.4'%3E%3Cpath d='M20 30c8-14 24-14 30 0-8 14-24 14-30 0z'/%3E%3Cpath d='M80 90c8-14 24-14 30 0-8 14-24 14-30 0z'/%3E%3Ccircle cx='100' cy='20' r='6'/%3E%3Ccircle cx='14' cy='100' r='6'/%3E%3C/g%3E%3C/svg%3E");
       background-attachment: fixed, fixed, fixed, fixed, fixed;
       background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
     }
@@ -357,14 +359,239 @@
     .landing-icon { font-size: 46px; margin-bottom: 16px; }
     .landing-card-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
     .landing-card-desc { font-size: 12.5px; color: var(--text2); line-height: 1.55; }
+
+    /* ---- Logo & marca ---- */
+    .brand-row { display: flex; align-items: center; gap: 10px; }
+    .brand-logo { width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0; }
+    .brand-texts { display: flex; flex-direction: column; }
+    .brand-company { font-size: 16px; font-weight: 800; color: var(--green-dark); letter-spacing: -0.2px; line-height: 1.15; }
+    .brand-name { font-size: 12px; font-weight: 600; color: var(--green-mid); letter-spacing: 0.2px; }
+    .brand-sub { font-size: 10.5px; color: var(--text3); }
+
+    /* ---- Menu hamburguer ---- */
+    .hamburger-btn {
+      width: 38px; height: 38px; border-radius: 10px;
+      border: 1px solid var(--border2); background: var(--surface);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px; cursor: pointer; flex-shrink: 0;
+    }
+    .hamburger-btn span { display: block; width: 18px; height: 2px; background: var(--green-mid); border-radius: 2px; }
+    .hamburger-btn:hover { background: var(--green-pale); }
+
+    .side-overlay {
+      position: fixed; inset: 0; background: rgba(10,40,60,0.45);
+      z-index: 10000; display: none; opacity: 0; transition: opacity 0.2s ease;
+    }
+    .side-overlay.show { display: block; opacity: 1; }
+    .side-panel {
+      position: fixed; top: 0; left: 0; height: 100%; width: 88%; max-width: 360px;
+      background: var(--surface); z-index: 10001; box-shadow: 8px 0 30px rgba(0,0,0,0.18);
+      transform: translateX(-100%); transition: transform 0.25s ease;
+      padding: 1.5rem 1.4rem 2rem; overflow-y: auto;
+    }
+    .side-panel.show { transform: translateX(0); }
+    .side-panel-close {
+      background: none; border: none; font-size: 20px; color: var(--text2);
+      cursor: pointer; float: right; line-height: 1;
+    }
+    .side-panel h2 {
+      font-size: 18px; font-weight: 800; color: var(--green-dark);
+      margin: 1rem 0 0.75rem; clear: both;
+    }
+    .side-panel p { font-size: 13.5px; color: var(--text2); line-height: 1.7; margin-bottom: 0.9rem; }
+    .side-panel .quote {
+      font-style: italic; color: var(--green-mid); font-size: 13px;
+      border-left: 3px solid var(--green-light); padding-left: 12px; margin: 1rem 0;
+    }
+    .side-panel .signature { font-size: 12.5px; font-weight: 700; color: var(--green-dark); margin-top: 1.25rem; }
+
+    /* ---- Ecrã de autenticação (login / registo) ---- */
+    #auth-screen {
+      position: fixed; inset: 0; z-index: 9000;
+      background: var(--bg);
+      background-image:
+        radial-gradient(circle at 12% 18%, rgba(28,147,199,0.18), transparent 40%),
+        radial-gradient(circle at 88% 82%, rgba(111,212,236,0.22), transparent 42%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+    .auth-box {
+      width: 100%; max-width: 380px; background: var(--surface);
+      border-radius: 20px; padding: 2rem 1.75rem 1.75rem;
+      box-shadow: 0 24px 60px rgba(10,60,99,0.16), 0 2px 10px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+    .auth-logo { width: 76px; height: 76px; border-radius: 50%; margin: 0 auto 10px; display: block; }
+    .auth-brand { font-size: 21px; font-weight: 800; color: var(--green-dark); letter-spacing: -0.3px; }
+    .auth-brand-sub { font-size: 12px; color: var(--green-mid); font-weight: 600; margin-bottom: 1.5rem; }
+    .auth-toggle {
+      display: flex; border: 1px solid var(--border2); border-radius: var(--radius-sm);
+      overflow: hidden; margin-bottom: 1.5rem;
+    }
+    .auth-toggle button {
+      flex: 1; padding: 9px 10px; font-size: 13px; font-weight: 600;
+      border: none; background: var(--surface); color: var(--text2);
+      cursor: pointer; font-family: inherit; transition: background 0.15s, color 0.15s;
+    }
+    .auth-toggle button.active { background: var(--green-mid); color: #fff; }
+    .auth-form { text-align: left; }
+    .auth-error {
+      display: none; font-size: 12px; color: #a3271f; background: #fdecea;
+      border: 1px solid #f3c6c2; border-radius: var(--radius-sm); padding: 8px 10px;
+      margin-bottom: 12px;
+    }
+    .auth-error.show { display: block; }
+    .auth-links { display: flex; justify-content: space-between; margin-top: 4px; margin-bottom: 1rem; }
+    .auth-links a { font-size: 12px; color: var(--green-mid); text-decoration: none; cursor: pointer; }
+    .auth-links a:hover { text-decoration: underline; }
+    .auth-note { font-size: 11px; color: var(--text3); margin-top: 1.1rem; line-height: 1.5; }
+
+    /* ---- Campo de palavra-passe com opção mostrar/ocultar ---- */
+    .password-row { display: flex; align-items: center; gap: 10px; }
+    .password-row .password-input { flex: 1; min-width: 0; }
+    input.password-input {
+      padding: 14px 14px;
+      font-size: 16px;
+      letter-spacing: 1px;
+    }
+    .show-pw-toggle {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11.5px; font-weight: 600; color: var(--text2);
+      white-space: nowrap; cursor: pointer; user-select: none;
+      flex-shrink: 0;
+    }
+    .show-pw-toggle input[type=checkbox] {
+      width: 17px; height: 17px; cursor: pointer;
+      accent-color: var(--green-mid);
+    }
+
+    /* ---- Modal de Termos ---- */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(10,40,60,0.5);
+      z-index: 10500; display: none; align-items: center; justify-content: center; padding: 1.25rem;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-box {
+      background: var(--surface); border-radius: 18px; max-width: 480px; width: 100%;
+      max-height: 82vh; overflow-y: auto; padding: 1.5rem 1.5rem 1.75rem;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.25);
+    }
+    .modal-box h3 { font-size: 16px; font-weight: 800; color: var(--green-dark); margin-bottom: 4px; }
+    .modal-box h4 { font-size: 13px; font-weight: 700; color: var(--green-mid); margin: 1rem 0 4px; }
+    .modal-box p, .modal-box li { font-size: 12.5px; color: var(--text2); line-height: 1.65; }
+    .modal-box ul { padding-left: 18px; margin-bottom: 8px; }
+    .modal-close-row { text-align: right; margin-top: 1.25rem; }
   </style>
 </head>
 <body>
 
+  <!-- ===================== ECRÃ DE LOGIN / REGISTO ===================== -->
+  <div id="auth-screen">
+    <div class="auth-box">
+      <img class="auth-logo" src="data:image/webp;base64,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" alt="K-Care Software" />
+      <div class="auth-brand">K-Care Software</div>
+      <div class="auth-brand-sub">Cuidar — conectando gerações com cuidado</div>
+
+      <div class="auth-toggle">
+        <button type="button" id="auth-tab-login" class="active" onclick="setAuthTab('login')">Iniciar sessão</button>
+        <button type="button" id="auth-tab-signup" onclick="setAuthTab('signup')">Criar conta</button>
+      </div>
+
+      <div id="auth-error" class="auth-error"></div>
+
+      <!-- Formulário de Login -->
+      <form id="auth-form-login" class="auth-form" novalidate onsubmit="return handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="login-email" placeholder="exemplo@email.com" autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Palavra-passe</label>
+          <div class="password-row">
+            <input type="password" id="login-password" class="password-input" placeholder="••••••••" autocomplete="current-password" />
+            <label class="show-pw-toggle">
+              <input type="checkbox" onchange="togglePasswordVisibility('login-password', this)" />
+              Mostrar
+            </label>
+          </div>
+        </div>
+        <div class="auth-links">
+          <span></span>
+          <a onclick="showToast('Recuperação de palavra-passe disponível após ligação ao servidor.')">Esqueceu a palavra-passe?</a>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Entrar →</button>
+      </form>
+
+      <!-- Formulário de Registo -->
+      <form id="auth-form-signup" class="auth-form" novalidate style="display:none;" onsubmit="return handleSignup(event)">
+        <div class="form-group">
+          <label class="form-label">Nome completo</label>
+          <input type="text" id="signup-nome" placeholder="O seu nome" autocomplete="name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="signup-email" placeholder="exemplo@email.com" autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Palavra-passe</label>
+          <div class="password-row">
+            <input type="password" id="signup-password" class="password-input" placeholder="Mínimo 8 caracteres" autocomplete="new-password" />
+            <label class="show-pw-toggle">
+              <input type="checkbox" onchange="togglePasswordVisibility('signup-password', this)" />
+              Mostrar
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmar palavra-passe</label>
+          <div class="password-row">
+            <input type="password" id="signup-password2" class="password-input" placeholder="Repita a palavra-passe" autocomplete="new-password" />
+            <label class="show-pw-toggle">
+              <input type="checkbox" onchange="togglePasswordVisibility('signup-password2', this)" />
+              Mostrar
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Criar conta →</button>
+      </form>
+
+      <div class="auth-note">🔒 Ao continuar, aceita os Termos e Condições e a Política de Privacidade da K-Care Software.</div>
+    </div>
+  </div>
+
+  <!-- ===================== MENU LATERAL "SOBRE NÓS" ===================== -->
+  <div id="side-overlay" class="side-overlay" onclick="closeSidePanel()"></div>
+  <div id="side-panel" class="side-panel" onclick="event.stopPropagation()">
+    <button class="side-panel-close" onclick="closeSidePanel()">✕</button>
+    <div class="brand-row">
+      <img class="brand-logo" src="data:image/webp;base64,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" alt="K-Care Software" />
+      <div class="brand-texts">
+        <div class="brand-company">K-Care Software</div>
+        <div class="brand-name">Cuidar</div>
+      </div>
+    </div>
+    <h2>Sobre nós</h2>
+    <p>A K-Care Software é uma empresa portuguesa criada por Kevin Gomes, nascida de um propósito simples e profundamente humano: aproximar gerações e devolver dignidade ao cuidado.</p>
+    <p>Acreditamos que ninguém deveria enfrentar a terceira idade sozinho. Todos os dias, milhares de pessoas idosas precisam de uma mão amiga para ir a uma consulta, tratar de contas ou simplesmente ter companhia — e milhares de pessoas de boa vontade querem oferecer exatamente isso. A Cuidar existe para ligar estas duas pontas com confiança, segurança e simplicidade.</p>
+    <p>Mais do que uma plataforma tecnológica, somos uma ponte entre gerações. Cada pedido atendido é uma história de cuidado, de tempo bem dado e de respeito por quem tanto já nos deu.</p>
+    <div class="quote">"Cuidar de quem cuidou de nós é o mínimo que podemos fazer — e a tecnologia pode ajudar a fazê-lo melhor."</div>
+    <p>Trabalhamos todos os dias para tornar esta rede cada vez mais segura, acessível e humana, com verificação de identidade, avaliações transparentes e suporte dedicado a cada família e a cada cuidador.</p>
+    <div class="signature">— Kevin Gomes, Fundador da K-Care Software · Portugal</div>
+  </div>
+
   <header>
-    <div class="brand">
-      <div class="brand-name">🌿 Cuidar </div>
-      <div class="brand-sub">conectando gerações com cuidado</div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button class="hamburger-btn" onclick="openSidePanel()" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="brand-row">
+        <img class="brand-logo" src="data:image/webp;base64,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" alt="K-Care Software" />
+        <div class="brand-texts">
+          <div class="brand-company">K-Care Software</div>
+          <div class="brand-name">Cuidar</div>
+          <div class="brand-sub">conectando gerações com cuidado</div>
+        </div>
+      </div>
     </div>
     <div id="header-controls" style="display:none; align-items:center; gap:10px;">
       <button class="back-link" onclick="goToLanding()">← Início</button>
@@ -378,7 +605,7 @@
   <!-- ===================== CAPA INICIAL ===================== -->
   <div class="main" id="landing">
     <div class="landing-wrap">
-      <div class="landing-title">O que precisa ?</div>
+      <div class="landing-title">O que precisa hoje?</div>
       <div class="landing-sub">Escolha uma opção para continuar</div>
     </div>
     <div class="landing-options">
@@ -667,11 +894,11 @@
         </div>
 
         <div class="carer-card">
-          <div class="avatar av-teal">AS</div>
+          <div class="avatar av-teal">C1</div>
           <div style="flex:1">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
-              <div class="carer-name">Ana Sousa</div>
-              <span class="badge badge-teal">Verificada ✓</span>
+              <div class="carer-name">Cuidador verificado #1</div>
+              <span class="badge badge-teal">Verificado ✓</span>
             </div>
             <div class="stars">★★★★★ <span style="color:var(--text2); font-size:11px;">4.9 (23 ajudas)</span></div>
             <div class="carer-loc">Cascais · 1,2 km · €10/hora</div>
@@ -680,15 +907,15 @@
               <span class="tag">Exames</span>
               <span class="tag">Transporte próprio</span>
             </div>
-            <button class="btn btn-primary" style="margin-top:10px; padding:7px 16px; font-size:12px;" onclick="goTo('s5')">Solicitar Ana →</button>
+            <button class="btn btn-primary" style="margin-top:10px; padding:7px 16px; font-size:12px;" onclick="goTo('s5')">Solicitar →</button>
           </div>
         </div>
 
         <div class="carer-card">
-          <div class="avatar av-blue">MF</div>
+          <div class="avatar av-blue">C2</div>
           <div style="flex:1">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
-              <div class="carer-name">Miguel Ferreira</div>
+              <div class="carer-name">Cuidador verificado #2</div>
               <span class="badge badge-teal">Verificado ✓</span>
             </div>
             <div class="stars">★★★★☆ <span style="color:var(--text2); font-size:11px;">4.6 (41 ajudas)</span></div>
@@ -703,11 +930,11 @@
         </div>
 
         <div class="carer-card">
-          <div class="avatar av-coral">LC</div>
+          <div class="avatar av-coral">C3</div>
           <div style="flex:1">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
-              <div class="carer-name">Luísa Costa</div>
-              <span class="badge badge-teal">Verificada ✓</span>
+              <div class="carer-name">Cuidador verificado #3</div>
+              <span class="badge badge-teal">Verificado ✓</span>
             </div>
             <div class="stars">★★★★★ <span style="color:var(--text2); font-size:11px;">4.8 (17 ajudas)</span></div>
             <div class="carer-loc">Estoril · 3,1 km · €9/hora</div>
@@ -735,13 +962,13 @@
         </div>
         <div class="confirm-box">
           <div class="confirm-icon">✅</div>
-          <div class="confirm-title">Pedido enviado à Ana!</div>
-          <div class="confirm-sub">Ela receberá uma notificação e entrará em contacto em breve pelo número fornecido.</div>
+          <div class="confirm-title">Pedido enviado!</div>
+          <div class="confirm-sub">O cuidador receberá uma notificação e entrará em contacto em breve pelo número fornecido.</div>
         </div>
         <div class="info-card">
           <div style="font-size:13px; font-weight:600; margin-bottom:8px;">Resumo do pedido</div>
           <div class="info-row"><span class="info-key">Serviço</span><span class="info-val">Consulta médica</span></div>
-          <div class="info-row"><span class="info-key">Cuidadora</span><span class="info-val">Ana Sousa</span></div>
+          <div class="info-row"><span class="info-key">Cuidador</span><span class="info-val">Cuidador verificado #1</span></div>
           <div class="info-row"><span class="info-key">Local</span><span class="info-val">Cascais</span></div>
           <div class="info-row"><span class="info-key">Estado</span><span class="info-val status-ok">Aguardando confirmação</span></div>
         </div>
@@ -824,11 +1051,11 @@
           <div class="step-dot future">3</div>
         </div>
         <div class="section-title">Subscrição mensal</div>
-        <div class="section-sub">Acesso completo à plataforma por apenas €12,99/mês</div>
+        <div class="section-sub">Acesso completo à plataforma por apenas €50,00/mês</div>
 
         <div style="background:var(--green-pale); border:1px solid var(--green-light); border-radius:var(--radius); padding:1.25rem; margin-bottom:1.25rem; text-align:center;">
           <div style="font-size:13px; color:var(--green-mid); margin-bottom:4px; font-weight:600;">PLANO CUIDADOR</div>
-          <div style="font-size:36px; font-weight:700; color:var(--green-dark);">€12,99<span style="font-size:14px; font-weight:400; color:var(--green-mid);">/mês</span></div>
+          <div style="font-size:36px; font-weight:700; color:var(--green-dark);">€50,00<span style="font-size:14px; font-weight:400; color:var(--green-mid);">/mês</span></div>
           <div style="font-size:12px; color:var(--green-mid); margin-top:4px;">Cancele quando quiser · Sem compromisso</div>
         </div>
 
@@ -863,9 +1090,16 @@
           <input type="text" placeholder="Como aparece no cartão" />
         </div>
 
+        <div style="background:var(--surface2); border:1px solid var(--border2); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:1.1rem;">
+          <div style="font-size:12px; font-weight:700; color:var(--green-dark); margin-bottom:4px;">⚠️ Aviso legal importante</div>
+          <div style="font-size:11.5px; color:var(--text2); line-height:1.6;">
+            A K-Care Software atua exclusivamente como plataforma de intermediação tecnológica entre clientes e cuidadores independentes, nos termos gerais da lei aplicável aos serviços da sociedade da informação e à intermediação de serviços. A prestação do serviço é acordada diretamente entre o cliente e o cuidador, sendo estes os responsáveis pela emissão de fatura/recibo referente ao serviço prestado, pelo cumprimento das respetivas obrigações fiscais e pela qualidade da execução do serviço. A K-Care Software não é parte no contrato de prestação de serviço celebrado entre cliente e cuidador e não assume qualquer responsabilidade por danos, incumprimentos, obrigações fiscais ou disputas decorrentes dessa relação, sem prejuízo das disposições legais imperativas aplicáveis.
+          </div>
+        </div>
+
         <div style="display:flex; gap:8px; align-items:flex-start; margin-bottom:1rem;">
           <input type="checkbox" id="termos" style="width:auto; margin-top:3px;" />
-          <label for="termos" style="font-size:12px; color:var(--text2); line-height:1.5; cursor:pointer;">Aceito os <span style="color:var(--green-mid); text-decoration:underline;">Termos e Condições</span> e autorizo a cobrança mensal de €12,99 até cancelar a subscrição.</label>
+          <label for="termos" style="font-size:12px; color:var(--text2); line-height:1.5; cursor:pointer;">Aceito os <span style="color:var(--green-mid); text-decoration:underline; cursor:pointer;" onclick="openTermsModal(event)">Termos e Condições</span> (incluindo o aviso legal acima) e autorizo a cobrança mensal de €50,00 até cancelar a subscrição.</label>
         </div>
 
         <div style="display:flex; gap:6px; align-items:center; margin-bottom:1.25rem; justify-content:center;">
@@ -874,7 +1108,7 @@
 
         <div class="nav">
           <button class="btn" onclick="goToCuidador('c1')">← Voltar</button>
-          <button class="btn btn-primary" onclick="goToCuidador('c3')">Pagar €12,99 →</button>
+          <button class="btn btn-primary" onclick="goToCuidador('c3')">Pagar €50,00 →</button>
         </div>
       </div>
 
@@ -983,8 +1217,41 @@
 
   </div>
 
-  <footer>© 2026 K-Caresoftware. Todos os direitos reservados.</footer>
+  <footer>
+    © 2026 K-Care Software. Todos os direitos reservados. ·
+    <span style="text-decoration:underline; cursor:pointer;" onclick="openTermsModal(event)">Termos e Condições</span>
+  </footer>
   <div id="toast"></div>
+
+  <!-- ===================== MODAL TERMOS E CONDIÇÕES ===================== -->
+  <div id="terms-modal" class="modal-overlay" onclick="closeTermsModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3>Termos e Condições — K-Care Software</h3>
+      <p>Ao utilizar a plataforma Cuidar, propriedade da K-Care Software, sociedade com sede em Portugal, o utilizador aceita os seguintes termos:</p>
+
+      <h4>1. Natureza do serviço</h4>
+      <p>A K-Care Software disponibiliza uma plataforma tecnológica de intermediação que aproxima clientes e cuidadores independentes, nos termos gerais aplicáveis aos prestadores de serviços da sociedade da informação (Decreto-Lei n.º 7/2004, na sua redação atual). A K-Care Software não presta diretamente os serviços de acompanhamento, apoio ou cuidado anunciados na plataforma.</p>
+
+      <h4>2. Relação entre cliente e cuidador</h4>
+      <p>O contrato de prestação de serviço é celebrado diretamente entre o cliente e o cuidador. Cabe às partes acordar entre si o valor, o horário, o local e as condições do serviço.</p>
+
+      <h4>3. Faturação e recibos</h4>
+      <p><strong>A emissão de fatura ou recibo referente ao serviço prestado é da exclusiva responsabilidade do cuidador e deve ser tratada diretamente entre o cliente e o cuidador.</strong> A K-Care Software não emite, não processa e não se responsabiliza por faturas, recibos ou pelo cumprimento de obrigações fiscais e declarativas de qualquer uma das partes perante a Autoridade Tributária ou outra entidade competente.</p>
+
+      <h4>4. Limitação de responsabilidade</h4>
+      <p>Sem prejuízo das normas legais imperativas em matéria de defesa do consumidor, a K-Care Software não se responsabiliza por danos diretos ou indiretos, incumprimentos contratuais, disputas ou prejuízos resultantes da relação entre cliente e cuidador, incluindo — mas não se limitando a — questões de faturação, qualidade do serviço prestado ou incidentes ocorridos durante a prestação do serviço.</p>
+
+      <h4>5. Subscrição</h4>
+      <p>O acesso de cuidadores à plataforma está sujeito a uma subscrição mensal de €50,00, com renovação automática até cancelamento pelo utilizador, sem período mínimo de fidelização.</p>
+
+      <h4>6. Proteção de dados</h4>
+      <p>Os dados pessoais recolhidos são tratados em conformidade com o Regulamento Geral sobre a Proteção de Dados (RGPD) e utilizados exclusivamente para verificação de identidade, segurança da plataforma e prestação do serviço.</p>
+
+      <div class="modal-close-row">
+        <button class="btn btn-primary" onclick="closeTermsModal(event)">Entendi</button>
+      </div>
+    </div>
+  </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
@@ -1224,6 +1491,145 @@
       } catch (err) {
         console.log('Erro ao obter morada:', err);
       }
+    }
+
+    // ============================================================
+    // ---- MENU LATERAL "SOBRE NÓS" ----
+    // ============================================================
+    function openSidePanel() {
+      document.getElementById('side-overlay').classList.add('show');
+      document.getElementById('side-panel').classList.add('show');
+    }
+    function closeSidePanel() {
+      document.getElementById('side-overlay').classList.remove('show');
+      document.getElementById('side-panel').classList.remove('show');
+    }
+
+    // ============================================================
+    // ---- MODAL TERMOS E CONDIÇÕES ----
+    // ============================================================
+    function openTermsModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById('terms-modal').classList.add('show');
+    }
+    function closeTermsModal(e) {
+      if (e) e.stopPropagation();
+      document.getElementById('terms-modal').classList.remove('show');
+    }
+
+    // ============================================================
+    // ---- AUTENTICAÇÃO (login / registo) ----
+    // ============================================================
+    // NOTA PARA LIGAÇÃO À BASE DE DADOS:
+    // Substitua a lógica dentro de handleLogin() e handleSignup() por
+    // chamadas reais ao seu backend / base de dados, por exemplo:
+    //
+    //   const res = await fetch('https://SEU-DOMINIO/api/login', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ email, password })
+    //   });
+    //   const data = await res.json();
+    //   if (!res.ok) { throw new Error(data.message || 'Credenciais inválidas'); }
+    //
+    // Enquanto o backend não está ligado, o login/registo abaixo aceita
+    // qualquer email + palavra-passe válidos apenas para demonstração.
+
+    function setAuthTab(tab) {
+      document.getElementById('auth-tab-login').classList.toggle('active', tab === 'login');
+      document.getElementById('auth-tab-signup').classList.toggle('active', tab === 'signup');
+      document.getElementById('auth-form-login').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('auth-form-signup').style.display = tab === 'signup' ? 'block' : 'none';
+      hideAuthError();
+    }
+
+    // ---- mostrar / ocultar palavra-passe ----
+    function togglePasswordVisibility(inputId, checkbox) {
+      const input = document.getElementById(inputId);
+      input.type = checkbox.checked ? 'text' : 'password';
+    }
+
+    function showAuthError(msg) {
+      const el = document.getElementById('auth-error');
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+    function hideAuthError() {
+      document.getElementById('auth-error').classList.remove('show');
+    }
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function enterApp() {
+      document.getElementById('auth-screen').style.display = 'none';
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      hideAuthError();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      if (!email || !password) {
+        showAuthError('Preencha o email e a palavra-passe.');
+        return false;
+      }
+      if (!isValidEmail(email)) {
+        showAuthError('Introduza um email válido.');
+        return false;
+      }
+
+      try {
+        // ---- LIGAR AQUI À BASE DE DADOS / API DE AUTENTICAÇÃO REAL ----
+        // const res = await fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, password }) });
+        // if (!res.ok) throw new Error('Email ou palavra-passe incorretos.');
+
+        showToast('Sessão iniciada com sucesso!');
+        enterApp();
+      } catch (err) {
+        showAuthError(err.message || 'Não foi possível iniciar sessão.');
+      }
+      return false;
+    }
+
+    async function handleSignup(event) {
+      event.preventDefault();
+      hideAuthError();
+      const nome = document.getElementById('signup-nome').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const password2 = document.getElementById('signup-password2').value;
+
+      if (!nome || !email || !password || !password2) {
+        showAuthError('Preencha todos os campos.');
+        return false;
+      }
+      if (!isValidEmail(email)) {
+        showAuthError('Introduza um email válido.');
+        return false;
+      }
+      if (password.length < 8) {
+        showAuthError('A palavra-passe deve ter no mínimo 8 caracteres.');
+        return false;
+      }
+      if (password !== password2) {
+        showAuthError('As palavras-passe não coincidem.');
+        return false;
+      }
+
+      try {
+        // ---- LIGAR AQUI À BASE DE DADOS / API DE REGISTO REAL ----
+        // const res = await fetch('/api/signup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ nome, email, password }) });
+        // if (!res.ok) throw new Error('Não foi possível criar a conta.');
+
+        showToast('Conta criada com sucesso!');
+        enterApp();
+      } catch (err) {
+        showAuthError(err.message || 'Não foi possível criar a conta.');
+      }
+      return false;
     }
 
     let geocodeTimeout;
