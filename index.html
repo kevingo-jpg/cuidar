@@ -405,6 +405,29 @@
     }
     .side-panel .signature { font-size: 12.5px; font-weight: 700; color: var(--green-dark); margin-top: 1.25rem; }
 
+    .side-menu-list { margin-top: 1.25rem; display: flex; flex-direction: column; gap: 6px; }
+    .side-menu-item {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; text-align: left; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 13px 14px; font-size: 14px; font-weight: 600; color: var(--text);
+      cursor: pointer; font-family: inherit; transition: background 0.15s, border-color 0.15s;
+    }
+    .side-menu-item:hover { background: var(--green-pale); border-color: var(--border2); }
+    .side-menu-item-danger { color: #B3261E; }
+    .side-menu-arrow { color: var(--text3); font-size: 16px; }
+    .side-back-link {
+      background: none; border: none; color: var(--green-mid); font-weight: 600;
+      font-size: 13px; cursor: pointer; padding: 0; margin-bottom: 0.5rem; font-family: inherit;
+    }
+    .side-contact-email {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 0.75rem; padding: 12px 14px; border: 1px solid var(--border2);
+      border-radius: var(--radius-sm); background: var(--green-pale);
+      color: var(--green-dark); font-weight: 700; font-size: 14px;
+      text-decoration: none;
+    }
+
     /* ---- Ecrã de autenticação (login / registo) ---- */
     #auth-screen {
       position: fixed; inset: 0; z-index: 9000;
@@ -563,20 +586,50 @@
   <div id="side-overlay" class="side-overlay" onclick="closeSidePanel()"></div>
   <div id="side-panel" class="side-panel" onclick="event.stopPropagation()">
     <button class="side-panel-close" onclick="closeSidePanel()">✕</button>
-    <div class="brand-row">
-      <img class="brand-logo" src="data:image/webp;base64,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" alt="K-Care Software" />
-      <div class="brand-texts">
-        <div class="brand-company">K-Care Software</div>
-        <div class="brand-name">Cuidar</div>
+
+    <!-- ---- MENU PRINCIPAL ---- -->
+    <div id="side-menu-view">
+      <div class="brand-row">
+        <img class="brand-logo" src="data:image/webp;base64,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" alt="K-Care Software" />
+        <div class="brand-texts">
+          <div class="brand-company">K-Care Software</div>
+          <div class="brand-name">Cuidar</div>
+        </div>
+      </div>
+      <div class="side-menu-list">
+        <button class="side-menu-item" onclick="showSidePanelView('about')">
+          <span>Sobre nós</span><span class="side-menu-arrow">›</span>
+        </button>
+        <button class="side-menu-item" onclick="openTermsModal(event)">
+          <span>Termos e responsabilidade</span><span class="side-menu-arrow">›</span>
+        </button>
+        <button class="side-menu-item" onclick="showSidePanelView('contact')">
+          <span>Fale connosco</span><span class="side-menu-arrow">›</span>
+        </button>
+        <button class="side-menu-item side-menu-item-danger" onclick="handleLogout()">
+          <span>Terminar sessão</span><span class="side-menu-arrow">›</span>
+        </button>
       </div>
     </div>
-    <h2>Sobre nós</h2>
-    <p>A K-Care Software é uma empresa portuguesa criada por Kevin Gomes, nascida de um propósito simples e profundamente humano: aproximar gerações e devolver dignidade ao cuidado.</p>
-    <p>Acreditamos que ninguém deveria enfrentar a terceira idade sozinho. Todos os dias, milhares de pessoas idosas precisam de uma mão amiga para ir a uma consulta, tratar de contas ou simplesmente ter companhia — e milhares de pessoas de boa vontade querem oferecer exatamente isso. A Cuidar existe para ligar estas duas pontas com confiança, segurança e simplicidade.</p>
-    <p>Mais do que uma plataforma tecnológica, somos uma ponte entre gerações. Cada pedido atendido é uma história de cuidado, de tempo bem dado e de respeito por quem tanto já nos deu.</p>
-    <div class="quote">"Cuidar de quem cuidou de nós é o mínimo que podemos fazer — e a tecnologia pode ajudar a fazê-lo melhor."</div>
-    <p>Trabalhamos todos os dias para tornar esta rede cada vez mais segura, acessível e humana, com verificação de identidade, avaliações transparentes e suporte dedicado a cada família e a cada cuidador.</p>
-    <div class="signature">— Kevin Gomes, Fundador da K-Care Software · Portugal</div>
+
+    <!-- ---- SOBRE NÓS ---- -->
+    <div id="side-about-view" style="display:none;">
+      <button class="side-back-link" onclick="showSidePanelView('menu')">← Voltar ao menu</button>
+      <h2>Sobre nós</h2>
+      <p>A K-Care Software é uma empresa portuguesa nascida de um propósito simples e profundamente humano: aproximar gerações e devolver dignidade ao cuidado.</p>
+      <p>Acreditamos que ninguém deveria enfrentar a terceira idade sozinho. Todos os dias, milhares de pessoas idosas precisam de uma mão amiga para ir a uma consulta, tratar de contas ou simplesmente ter companhia — e milhares de pessoas de boa vontade querem oferecer exatamente isso. A Cuidar existe para ligar estas duas pontas com confiança, segurança e simplicidade.</p>
+      <p>Mais do que uma plataforma tecnológica, somos uma ponte entre gerações. Cada pedido atendido é uma história de cuidado, de tempo bem dado e de respeito por quem tanto já nos deu.</p>
+      <div class="quote">"Cuidar de quem cuidou de nós é o mínimo que podemos fazer — e a tecnologia pode tornar esse cuidado ainda melhor."</div>
+      <p>Trabalhamos todos os dias para tornar esta rede cada vez mais segura, acessível e humana, com verificação de identidade, avaliações transparentes e suporte dedicado a cada família e a cada cuidador.</p>
+    </div>
+
+    <!-- ---- FALE CONNOSCO ---- -->
+    <div id="side-contact-view" style="display:none;">
+      <button class="side-back-link" onclick="showSidePanelView('menu')">← Voltar ao menu</button>
+      <h2>Fale connosco</h2>
+      <p>Tem dúvidas, sugestões ou precisa de suporte? A nossa equipa está disponível por email e responde o mais brevemente possível.</p>
+      <a class="side-contact-email" href="mailto:kcaresoftware@gmail.com">📧 kcaresoftware@gmail.com</a>
+    </div>
   </div>
 
   <header>
@@ -596,8 +649,8 @@
     <div id="header-controls" style="display:none; align-items:center; gap:10px;">
       <button class="back-link" onclick="goToLanding()">← Início</button>
       <div class="toggle-row">
-        <button class="toggle-btn active" id="tab-cliente" onclick="setTab('cliente')">Preciso de ajuda</button>
-        <button class="toggle-btn" id="tab-cuidador" onclick="setTab('cuidador')">Quero ajudar</button>
+        <button class="toggle-btn active" id="tab-cliente" onclick="setTab('cliente')">Cliente</button>
+        <button class="toggle-btn" id="tab-cuidador" onclick="setTab('cuidador')">Cuidador</button>
       </div>
     </div>
   </header>
@@ -633,8 +686,7 @@
           <div class="step-dot active">1</div><div class="step-line"></div>
           <div class="step-dot future">2</div><div class="step-line"></div>
           <div class="step-dot future">3</div><div class="step-line"></div>
-          <div class="step-dot future">4</div><div class="step-line"></div>
-          <div class="step-dot future">5</div>
+          <div class="step-dot future">4</div>
         </div>
         <div class="section-title">Que tipo de ajuda precisa?</div>
         <div class="section-sub">Selecione um ou mais serviços</div>
@@ -722,8 +774,7 @@
           <div class="step-dot active">2</div><div class="step-line"></div>
           <div class="step-dot future">3</div><div class="step-line"></div>
           <div class="step-dot future">4</div><div class="step-line"></div>
-          <div class="step-dot future">5</div><div class="step-line"></div>
-          <div class="step-dot future">6</div>
+          <div class="step-dot future">5</div>
         </div>
         <div class="section-title">Que tipo de ajuda precisa?</div>
         <div class="section-sub">Selecione as opções que se aplicam e descreva o que necessita</div>
@@ -769,8 +820,7 @@
           <div class="step-dot done">✓</div><div class="step-line"></div>
           <div class="step-dot active">2</div><div class="step-line"></div>
           <div class="step-dot future">3</div><div class="step-line"></div>
-          <div class="step-dot future">4</div><div class="step-line"></div>
-          <div class="step-dot future">5</div>
+          <div class="step-dot future">4</div>
         </div>
         <div class="section-title">Os seus dados pessoais</div>
         <div class="section-sub">Precisamos verificar a sua identidade para garantir segurança</div>
@@ -800,20 +850,6 @@
           <label class="form-label">Email</label>
           <input type="email" id="cl-email" placeholder="exemplo@email.com" />
         </div>
-        <div class="form-group">
-          <label class="form-label">Tipo de documento de identificação</label>
-          <select id="cl-doc-tipo" onchange="toggleClienteDoc()">
-            <option value="">Selecione o documento</option>
-            <option value="bi">Bilhete de Identidade (BI)</option>
-            <option value="cc">Cartão de Cidadão</option>
-            <option value="res">Título de Residência</option>
-          </select>
-        </div>
-        <div class="form-group" id="cl-doc-number-group" style="display:none;">
-          <label class="form-label" id="cl-doc-number-label">Número do documento</label>
-          <input type="text" id="cl-doc-num" placeholder="Ex: 12345678" />
-        </div>
-
         <div class="security-note">
           <span style="font-size:16px; flex-shrink:0;">🔒</span>
           <span>Os seus dados são tratados com total confidencialidade e usados apenas para verificação de identidade e segurança da plataforma.</span>
@@ -831,15 +867,14 @@
           <div class="step-dot done">✓</div><div class="step-line"></div>
           <div class="step-dot done">✓</div><div class="step-line"></div>
           <div class="step-dot active">3</div><div class="step-line"></div>
-          <div class="step-dot future">4</div><div class="step-line"></div>
-          <div class="step-dot future">5</div>
+          <div class="step-dot future">4</div>
         </div>
         <div class="section-title">Detalhes do pedido</div>
         <div class="section-sub">Quando e onde precisa de ajuda</div>
 
         <div class="form-group">
           <label class="form-label">Localidade</label>
-          <input type="text" placeholder="Ex: Cascais, Lisboa" />
+          <input type="text" id="pedido-localidade" placeholder="Ex: Cascais, Lisboa" />
         </div>
         <div class="form-group">
           <label class="form-label">Data do serviço</label>
@@ -872,104 +907,27 @@
 
         <div class="nav">
           <button class="btn" onclick="goTo('s2')">← Voltar</button>
-          <button class="btn btn-primary" onclick="goTo('s4')">Ver cuidadores →</button>
+          <button class="btn btn-primary" onclick="enviarPedido()">Enviar pedido →</button>
         </div>
       </div>
 
-      <!-- PASSO 4 — Cuidadores disponíveis -->
-      <div id="s4" class="screen">
-        <div class="progress-bar">
-          <div class="step-dot done">✓</div><div class="step-line"></div>
-          <div class="step-dot done">✓</div><div class="step-line"></div>
-          <div class="step-dot done">✓</div><div class="step-line"></div>
-          <div class="step-dot active">4</div><div class="step-line"></div>
-          <div class="step-dot future">5</div>
-        </div>
-        <div class="section-title">Cuidadores disponíveis</div>
-        <div class="section-sub">3 pessoas verificadas disponíveis na sua área</div>
-        <div class="filter-row">
-          <button class="filter-chip active">Todos</button>
-          <button class="filter-chip" onclick="filterChip(this)">Melhor avaliados</button>
-          <button class="filter-chip" onclick="filterChip(this)">Mais próximos</button>
-        </div>
-
-        <div class="carer-card">
-          <div class="avatar av-teal">C1</div>
-          <div style="flex:1">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
-              <div class="carer-name">Cuidador verificado #1</div>
-              <span class="badge badge-teal">Verificado ✓</span>
-            </div>
-            <div class="stars">★★★★★ <span style="color:var(--text2); font-size:11px;">4.9 (23 ajudas)</span></div>
-            <div class="carer-loc">Cascais · 1,2 km · €10/hora</div>
-            <div class="tag-row">
-              <span class="tag">Consultas</span>
-              <span class="tag">Exames</span>
-              <span class="tag">Transporte próprio</span>
-            </div>
-            <button class="btn btn-primary" style="margin-top:10px; padding:7px 16px; font-size:12px;" onclick="goTo('s5')">Solicitar →</button>
-          </div>
-        </div>
-
-        <div class="carer-card">
-          <div class="avatar av-blue">C2</div>
-          <div style="flex:1">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
-              <div class="carer-name">Cuidador verificado #2</div>
-              <span class="badge badge-teal">Verificado ✓</span>
-            </div>
-            <div class="stars">★★★★☆ <span style="color:var(--text2); font-size:11px;">4.6 (41 ajudas)</span></div>
-            <div class="carer-loc">Cascais · 2,5 km · €8/hora</div>
-            <div class="tag-row">
-              <span class="tag">Compras</span>
-              <span class="tag">Contas</span>
-              <span class="tag">Passeios</span>
-            </div>
-            <button class="btn" style="margin-top:10px; padding:7px 16px; font-size:12px;" onclick="showToast('Perfil completo disponível em breve.')">Ver perfil</button>
-          </div>
-        </div>
-
-        <div class="carer-card">
-          <div class="avatar av-coral">C3</div>
-          <div style="flex:1">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
-              <div class="carer-name">Cuidador verificado #3</div>
-              <span class="badge badge-teal">Verificado ✓</span>
-            </div>
-            <div class="stars">★★★★★ <span style="color:var(--text2); font-size:11px;">4.8 (17 ajudas)</span></div>
-            <div class="carer-loc">Estoril · 3,1 km · €9/hora</div>
-            <div class="tag-row">
-              <span class="tag">Todos os serviços</span>
-              <span class="tag">Fala inglês</span>
-            </div>
-            <button class="btn" style="margin-top:10px; padding:7px 16px; font-size:12px;" onclick="showToast('Perfil completo disponível em breve.')">Ver perfil</button>
-          </div>
-        </div>
-
-        <div class="nav">
-          <button class="btn" onclick="goTo('s3')">← Voltar</button>
-        </div>
-      </div>
-
-      <!-- PASSO 5 — Confirmação -->
+      <!-- PASSO 4 — Confirmação -->
       <div id="s5" class="screen">
         <div class="progress-bar">
           <div class="step-dot done">✓</div><div class="step-line"></div>
           <div class="step-dot done">✓</div><div class="step-line"></div>
           <div class="step-dot done">✓</div><div class="step-line"></div>
-          <div class="step-dot done">✓</div><div class="step-line"></div>
-          <div class="step-dot active">5</div>
+          <div class="step-dot active">4</div>
         </div>
         <div class="confirm-box">
           <div class="confirm-icon">✅</div>
           <div class="confirm-title">Pedido enviado!</div>
-          <div class="confirm-sub">O cuidador receberá uma notificação e entrará em contacto em breve pelo número fornecido.</div>
+          <div class="confirm-sub">Um cuidador disponível na sua área irá receber o seu pedido e entrará em contacto pelo número fornecido.</div>
         </div>
         <div class="info-card">
           <div style="font-size:13px; font-weight:600; margin-bottom:8px;">Resumo do pedido</div>
-          <div class="info-row"><span class="info-key">Serviço</span><span class="info-val">Consulta médica</span></div>
-          <div class="info-row"><span class="info-key">Cuidador</span><span class="info-val">Cuidador verificado #1</span></div>
-          <div class="info-row"><span class="info-key">Local</span><span class="info-val">Cascais</span></div>
+          <div class="info-row"><span class="info-key">Serviço</span><span class="info-val" id="resumo-servico">—</span></div>
+          <div class="info-row"><span class="info-key">Local</span><span class="info-val" id="resumo-local">—</span></div>
           <div class="info-row"><span class="info-key">Estado</span><span class="info-val status-ok">Aguardando confirmação</span></div>
         </div>
         <button class="btn btn-block" style="margin-top:1rem;" onclick="goTo('s1')">Fazer outro pedido</button>
@@ -983,8 +941,7 @@
       <div id="c1" class="screen active">
         <div class="progress-bar">
           <div class="step-dot active">1</div><div class="step-line"></div>
-          <div class="step-dot future">2</div><div class="step-line"></div>
-          <div class="step-dot future">3</div>
+          <div class="step-dot future">2</div>
         </div>
         <div class="section-title">Os seus dados pessoais</div>
         <div class="section-sub">Precisamos verificar a sua identidade antes de receber pedidos</div>
@@ -1018,20 +975,6 @@
           </div>
           <div class="field-hint">Este valor aparece no seu perfil para os familiares que procuram ajuda. Pode alterá-lo quando quiser.</div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Tipo de documento de identificação</label>
-          <select id="c-doc-tipo" onchange="toggleCuidadorDoc()">
-            <option value="">Selecione o documento</option>
-            <option value="bi">Bilhete de Identidade (BI)</option>
-            <option value="cc">Cartão de Cidadão</option>
-            <option value="res">Título de Residência</option>
-          </select>
-        </div>
-        <div class="form-group" id="c-doc-number-group" style="display:none;">
-          <label class="form-label" id="c-doc-number-label">Número do documento</label>
-          <input type="text" id="c-doc-num" placeholder="Ex: 12345678" />
-        </div>
-
         <div class="security-note">
           <span style="font-size:16px; flex-shrink:0;">🔒</span>
           <span>Os seus dados são tratados com total confidencialidade e usados apenas para verificação de identidade.</span>
@@ -1039,85 +982,15 @@
 
         <div class="nav">
           <div></div>
-          <button class="btn btn-primary" onclick="goToCuidador('c2')">Continuar →</button>
+          <button class="btn btn-primary" onclick="goToCuidador('c3')">Continuar →</button>
         </div>
       </div>
 
-      <!-- ETAPA 2 — Subscrição -->
-      <div id="c2" class="screen">
-        <div class="progress-bar">
-          <div class="step-dot done">✓</div><div class="step-line"></div>
-          <div class="step-dot active">2</div><div class="step-line"></div>
-          <div class="step-dot future">3</div>
-        </div>
-        <div class="section-title">Subscrição mensal</div>
-        <div class="section-sub">Acesso completo à plataforma por apenas €50,00/mês</div>
-
-        <div style="background:var(--green-pale); border:1px solid var(--green-light); border-radius:var(--radius); padding:1.25rem; margin-bottom:1.25rem; text-align:center;">
-          <div style="font-size:13px; color:var(--green-mid); margin-bottom:4px; font-weight:600;">PLANO CUIDADOR</div>
-          <div style="font-size:36px; font-weight:700; color:var(--green-dark);">€50,00<span style="font-size:14px; font-weight:400; color:var(--green-mid);">/mês</span></div>
-          <div style="font-size:12px; color:var(--green-mid); margin-top:4px;">Cancele quando quiser · Sem compromisso</div>
-        </div>
-
-        <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1rem 1.25rem; margin-bottom:1.25rem;">
-          <div style="font-size:13px; font-weight:600; margin-bottom:10px;">O que está incluído:</div>
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <div style="display:flex; gap:8px; align-items:center; font-size:13px;"><span style="color:var(--green-main);">✓</span> Acesso a todos os pedidos na sua área</div>
-            <div style="display:flex; gap:8px; align-items:center; font-size:13px;"><span style="color:var(--green-main);">✓</span> Perfil verificado com selo de confiança</div>
-            <div style="display:flex; gap:8px; align-items:center; font-size:13px;"><span style="color:var(--green-main);">✓</span> Notificações de novos pedidos em tempo real</div>
-            <div style="display:flex; gap:8px; align-items:center; font-size:13px;"><span style="color:var(--green-main);">✓</span> Sistema de avaliações e reputação</div>
-            <div style="display:flex; gap:8px; align-items:center; font-size:13px;"><span style="color:var(--green-main);">✓</span> Suporte prioritário</div>
-          </div>
-        </div>
-
-        <div style="font-size:13px; font-weight:600; margin-bottom:10px;">Dados de pagamento</div>
-        <div class="form-group">
-          <label class="form-label">Número do cartão</label>
-          <input type="text" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)" />
-        </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-          <div class="form-group">
-            <label class="form-label">Validade</label>
-            <input type="text" placeholder="MM/AA" maxlength="5" oninput="formatExpiry(this)" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">CVV</label>
-            <input type="text" placeholder="123" maxlength="3" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Nome no cartão</label>
-          <input type="text" placeholder="Como aparece no cartão" />
-        </div>
-
-        <div style="background:var(--surface2); border:1px solid var(--border2); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:1.1rem;">
-          <div style="font-size:12px; font-weight:700; color:var(--green-dark); margin-bottom:4px;">⚠️ Aviso legal importante</div>
-          <div style="font-size:11.5px; color:var(--text2); line-height:1.6;">
-            A K-Care Software atua exclusivamente como plataforma de intermediação tecnológica entre clientes e cuidadores independentes, nos termos gerais da lei aplicável aos serviços da sociedade da informação e à intermediação de serviços. A prestação do serviço é acordada diretamente entre o cliente e o cuidador, sendo estes os responsáveis pela emissão de fatura/recibo referente ao serviço prestado, pelo cumprimento das respetivas obrigações fiscais e pela qualidade da execução do serviço. A K-Care Software não é parte no contrato de prestação de serviço celebrado entre cliente e cuidador e não assume qualquer responsabilidade por danos, incumprimentos, obrigações fiscais ou disputas decorrentes dessa relação, sem prejuízo das disposições legais imperativas aplicáveis.
-          </div>
-        </div>
-
-        <div style="display:flex; gap:8px; align-items:flex-start; margin-bottom:1rem;">
-          <input type="checkbox" id="termos" style="width:auto; margin-top:3px;" />
-          <label for="termos" style="font-size:12px; color:var(--text2); line-height:1.5; cursor:pointer;">Aceito os <span style="color:var(--green-mid); text-decoration:underline; cursor:pointer;" onclick="openTermsModal(event)">Termos e Condições</span> (incluindo o aviso legal acima) e autorizo a cobrança mensal de €50,00 até cancelar a subscrição.</label>
-        </div>
-
-        <div style="display:flex; gap:6px; align-items:center; margin-bottom:1.25rem; justify-content:center;">
-          <span style="font-size:11px; color:var(--text3);">🔒 Pagamento seguro SSL · Visa · Mastercard · MB Way</span>
-        </div>
-
-        <div class="nav">
-          <button class="btn" onclick="goToCuidador('c1')">← Voltar</button>
-          <button class="btn btn-primary" onclick="goToCuidador('c3')">Pagar €50,00 →</button>
-        </div>
-      </div>
-
-      <!-- ETAPA 3 — Pedidos disponíveis -->
+      <!-- ETAPA 2 — Pedidos disponíveis -->
       <div id="c3" class="screen">
         <div class="progress-bar">
           <div class="step-dot done">✓</div><div class="step-line"></div>
-          <div class="step-dot done">✓</div><div class="step-line"></div>
-          <div class="step-dot active">3</div>
+          <div class="step-dot active">2</div>
         </div>
 
         <div style="background:var(--green-pale); border:1px solid var(--green-light); border-radius:var(--radius); padding:1.25rem; text-align:center; margin-bottom:1.5rem;">
@@ -1241,10 +1114,7 @@
       <h4>4. Limitação de responsabilidade</h4>
       <p>Sem prejuízo das normas legais imperativas em matéria de defesa do consumidor, a K-Care Software não se responsabiliza por danos diretos ou indiretos, incumprimentos contratuais, disputas ou prejuízos resultantes da relação entre cliente e cuidador, incluindo — mas não se limitando a — questões de faturação, qualidade do serviço prestado ou incidentes ocorridos durante a prestação do serviço.</p>
 
-      <h4>5. Subscrição</h4>
-      <p>O acesso de cuidadores à plataforma está sujeito a uma subscrição mensal de €50,00, com renovação automática até cancelamento pelo utilizador, sem período mínimo de fidelização.</p>
-
-      <h4>6. Proteção de dados</h4>
+      <h4>5. Proteção de dados</h4>
       <p>Os dados pessoais recolhidos são tratados em conformidade com o Regulamento Geral sobre a Proteção de Dados (RGPD) e utilizados exclusivamente para verificação de identidade, segurança da plataforma e prestação do serviço.</p>
 
       <div class="modal-close-row">
@@ -1352,23 +1222,22 @@
       el.classList.add('active');
     }
 
-    // ---- identification fields ----
-    function toggleClienteDoc() {
-      const tipo = document.getElementById('cl-doc-tipo').value;
-      const group = document.getElementById('cl-doc-number-group');
-      const label = document.getElementById('cl-doc-number-label');
-      group.style.display = tipo ? 'block' : 'none';
-      const labels = { bi: 'Número do BI', cc: 'Número do Cartão de Cidadão', res: 'Número do Título de Residência' };
-      label.textContent = labels[tipo] || 'Número do documento';
-    }
+    // ---- envio do pedido ----
+    const serviceLabels = {
+      consulta: 'Consulta médica',
+      contas: 'Pagar contas',
+      compras: 'Compras',
+      exames: 'Exames',
+      passeio: 'Passeio',
+      outro: 'Outro'
+    };
 
-    function toggleCuidadorDoc() {
-      const tipo = document.getElementById('c-doc-tipo').value;
-      const group = document.getElementById('c-doc-number-group');
-      const label = document.getElementById('c-doc-number-label');
-      group.style.display = tipo ? 'block' : 'none';
-      const labels = { bi: 'Número do BI', cc: 'Número do Cartão de Cidadão', res: 'Número do Título de Residência' };
-      label.textContent = labels[tipo] || 'Número do documento';
+    function enviarPedido() {
+      const servico = serviceLabels[selectedService] || 'Serviço personalizado';
+      const local = document.getElementById('pedido-localidade').value.trim() || document.getElementById('cl-morada').value.trim() || '—';
+      document.getElementById('resumo-servico').textContent = servico;
+      document.getElementById('resumo-local').textContent = local;
+      goTo('s5');
     }
 
     // ---- sem término ----
@@ -1388,18 +1257,6 @@
         horaFim.disabled = false; horaFim.style.opacity = '1';
         note.style.display = 'none';
       }
-    }
-
-    // ---- card formatters ----
-    function formatCard(input) {
-      let v = input.value.replace(/\D/g, '').substring(0, 16);
-      input.value = v.replace(/(.{4})/g, '$1 ').trim();
-    }
-
-    function formatExpiry(input) {
-      let v = input.value.replace(/\D/g, '').substring(0, 4);
-      if (v.length >= 2) v = v.substring(0, 2) + '/' + v.substring(2);
-      input.value = v;
     }
 
     // ---- map (morada do cliente) ----
@@ -1494,15 +1351,30 @@
     }
 
     // ============================================================
-    // ---- MENU LATERAL "SOBRE NÓS" ----
+    // ---- MENU LATERAL ----
     // ============================================================
     function openSidePanel() {
+      showSidePanelView('menu');
       document.getElementById('side-overlay').classList.add('show');
       document.getElementById('side-panel').classList.add('show');
     }
     function closeSidePanel() {
       document.getElementById('side-overlay').classList.remove('show');
       document.getElementById('side-panel').classList.remove('show');
+    }
+    function showSidePanelView(view) {
+      document.getElementById('side-menu-view').style.display = view === 'menu' ? 'block' : 'none';
+      document.getElementById('side-about-view').style.display = view === 'about' ? 'block' : 'none';
+      document.getElementById('side-contact-view').style.display = view === 'contact' ? 'block' : 'none';
+      document.getElementById('side-panel').scrollTop = 0;
+    }
+
+    // ---- terminar sessão ----
+    function handleLogout() {
+      closeSidePanel();
+      goToLanding();
+      document.getElementById('auth-screen').style.display = 'flex';
+      showToast('Sessão terminada.');
     }
 
     // ============================================================
